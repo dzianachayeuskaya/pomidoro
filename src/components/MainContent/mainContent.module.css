@@ -1,0 +1,56 @@
+.mainContent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 100px 0;
+}
+
+.descrBlock {
+    display: flex;
+    flex-direction: column;
+    max-width: max(300px, 90%);
+}
+
+.taskListBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 370px;
+}
+
+.input {
+    padding: 19px 15px;
+    width: calc(100% - 30px);
+    background-color: var(--grayF4);
+    border: none;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.divider {
+    height: 1px;
+    width: 100%;
+    background-color: var(--grayEC);
+}
+
+.taskList {
+    width: 100%;
+}
+
+@media(min-width:768px) {
+    .mainContent {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .descrBlock {
+        max-width: 50%;
+        margin-right: 25px;
+    }
+}
+
+@media(min-width:1440px) {
+    .descrBlock {
+        max-width: min(30%, 500px);
+    }
+}

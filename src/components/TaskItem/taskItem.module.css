@@ -1,0 +1,99 @@
+.taskItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-top: 1px solid var(--grayEC);
+}
+
+.taskItem a {
+    position: relative;
+    flex-grow: 1;
+    max-width: 90%;
+}
+
+.taskItem a::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.taskNumber {
+    padding: 2px 8px;
+    margin-right: 10px;
+    border-radius: 100%;
+    border: 1px solid var(--grayC4);
+    color: var(--black);
+}
+
+.inputBuffer {
+    position: absolute;
+    top: -1000px;
+    left: -1000px;
+    visibility: hidden;
+    white-space: nowrap;
+    font-weight: 300;
+}
+
+.taskValueInput {
+    display: inline-block;
+    padding: 5px;
+    min-width: 12px;
+    max-width: 80%;
+    overflow-x: auto;
+    width: auto;
+    border: none;
+    font-weight: 300;
+    transition: background-color .3s ease;
+}
+
+.taskValueInput:focus-visible {
+    background-color: var(--grayF4);
+    outline: none;
+}
+
+.taskValueInput:disabled {
+    background-color: unset;
+}
+
+.dropdown {
+    position: absolute;
+    top: 10px;
+    right: -79px;
+    z-index: 100;
+}
+
+.menuBtn {
+    background-color: var(--white);
+}
+
+.menuBtn circle {
+    transition: fill .3s ease;
+}
+
+.cancelBtn {
+    margin-top: 10px;
+    border-bottom: 1px solid var(--black);
+    color: var(--black);
+    font-weight: 300;
+    background-color: transparent;
+    transition: border .3s ease, color .3s ease;
+}
+
+@media(min-width: 768px) {
+
+    .menuBtn:hover circle,
+    .menuBtn:active circle {
+        fill: var(--dark-green)
+    }
+
+    .cancelBtn:hover,
+    .cancelBtn:active {
+        border-bottom: 1px solid var(--dark-green);
+        color: var(--dark-green);
+    }
+}

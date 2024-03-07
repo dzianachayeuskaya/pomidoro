@@ -1,0 +1,102 @@
+.timerContainer {
+    display: flex;
+    flex-direction: column;
+    min-width: 50%;
+}
+
+.timerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 19px 40px;
+    background-color: var(--grayC4);
+}
+
+.timerHeader.work {
+    background-color: var(--red);
+}
+
+.timerHeader.break {
+    background-color: var(--green);
+}
+
+
+.timerBody {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--grayF4);
+}
+
+.timeContainer {
+    position: relative;
+}
+
+.timeSpan {
+    font-size: 50px;
+    font-weight: 100;
+}
+
+.timeSpan.work {
+    color: var(--red);
+}
+
+.timeSpan.break {
+    color: var(--green);
+}
+
+.addBtn {
+    position: absolute;
+    top: 30%;
+    right: 10%;
+    border-radius: 50%;
+}
+
+.addBtn circle {
+    transition: fill .3s ease
+}
+
+.actions {
+    display: flex;
+}
+
+.actions button:first-child {
+    margin-right: 25px;
+}
+
+@media(min-width:768px) {
+    .timerBody {
+        padding: 50px;
+    }
+
+    .timeSpan {
+        font-size: 100px;
+    }
+
+    .addBtn {
+        top: 30%;
+        right: 10%;
+    }
+
+    .addBtn:hover circle,
+    .addBtn:active circle {
+        fill: var(--dark-green)
+    }
+}
+
+@media(min-width:1440px) {
+    .timerBody {
+        padding: 100px;
+    }
+
+    .timeSpan {
+        font-size: 150px;
+    }
+
+    .addBtn {
+        top: 30%;
+        right: 10%;
+    }
+}

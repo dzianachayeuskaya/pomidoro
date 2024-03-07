@@ -1,0 +1,49 @@
+.errorContainer {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    padding: 20px;
+    max-width: 200px;
+    border: 1px solid var(--red);
+    color: var(--red);
+    background-color: rgba(220,
+            62,
+            34, 0.2);
+    transition: all 0.2s ease;
+}
+
+.fade-enter {
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.fade-exit {
+    opacity: 1;
+}
+
+.fade-exit-active {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 300ms, transform 300ms;
+}
+
+@media(min-width: 768px) {
+    .errorContainer {
+        right: 20px;
+        bottom: 20px;
+        max-width: 300px;
+    }
+}
+
+@media(min-width: 1440px) {
+    .errorContainer {
+        padding: 30px;
+        max-width: 500px;
+    }
+}

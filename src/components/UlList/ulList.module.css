@@ -1,0 +1,5 @@
+.item:before {
+    content: '•';
+    color: var(--red);
+    margin-right: 0.5em;
+}

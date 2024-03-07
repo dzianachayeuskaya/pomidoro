@@ -1,0 +1,256 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 100px 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.selectWrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: max(calc(100vw / 4), 150px);
+}
+
+.selectTitle {
+    padding: 20px 15px;
+    background-color: var(--grayF4);
+}
+
+.selectTitle::before,
+.selectTitle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 22px;
+    display: inline-block;
+    width: 10px;
+    height: 2px;
+    background-color: var(--dark-red);
+    transition: transform .3s ease
+}
+
+.selectTitle::before {
+    transform: translate(-3px, -50%) rotate(45deg);
+}
+
+.selectTitle::after {
+    transform: translate(3px, -50%) rotate(-45deg);
+}
+
+.selectWrapper.isOpen .selectTitle::before {
+    transform: translate(-3px, -50%) rotate(-45deg);
+}
+
+.selectWrapper.isOpen .selectTitle::after {
+    transform: translate(3px, -50%) rotate(45deg);
+}
+
+.selectContent {
+    position: absolute;
+    top: 58px;
+    right: 0;
+    display: none;
+    z-index: 1000;
+}
+
+.selectWrapper.isOpen .selectContent {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    background-color: var(--grayF4);
+}
+
+.selectLabel {
+    padding: 20px 15px;
+    border-top: 1px solid var(--grayDE)
+}
+
+.selectLabel.isActive {
+    display: none
+}
+
+.main {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 470px;
+    margin-bottom: 32px;
+}
+
+.aside {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 130px;
+}
+
+.main>div:not(:last-child),
+.footer>div:not(:last-child) {
+    margin-right: 32px;
+}
+
+.block {
+    display: flex;
+    min-height: 180px;
+    background-color: var(--grayF4);
+}
+
+.activityBlock {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 25px;
+    margin-bottom: 32px;
+    min-height: 210px;
+}
+
+.activityBlockContent {
+    display: inline-block;
+    font-weight: 400;
+}
+
+.activeTime {
+    display: inline-block;
+    color: var(--red);
+    font-weight: 700;
+}
+
+.pomidorBlock {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pomidorBlock.center {
+    justify-content: center;
+}
+
+.pomidorBlockMain {
+    display: flex;
+    padding: 25px;
+    align-items: center;
+}
+
+.pomidorBlockCounter {
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+    background-color: var(--red);
+}
+
+.chartWrapper {
+    position: relative;
+    flex: 1 1 800px;
+    height: 100%;
+    background-color: var(--grayF4);
+}
+
+.barWrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    cursor: pointer;
+}
+
+.backgroundWrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    width: 100%;
+}
+
+.background {
+    width: 87%;
+}
+
+.chartContentWrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 56px;
+    width: 76%;
+    z-index: 10;
+}
+
+.barItem {
+    position: relative;
+    flex: 1 0 80px;
+    height: 100%;
+    background-color: rgba(var(--peach), 0.3)
+}
+
+.barItem div {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(var(--peach, 1))
+}
+
+.barItem.active div {
+    background-color: var(--red);
+}
+
+.barItem.passive div,
+.barItem.active.passive div {
+    background-color: var(--gray99);
+    opacity: .6;
+}
+
+.xAxisItem {
+    flex: 0 0;
+    padding: 11px 23px;
+    background-color: rgba(var(--peach), 0.3);
+}
+
+.xAxisItem span {
+    color: var(--gray99);
+    transition: color .3s ease;
+}
+
+.xAxisItem.active span {
+    color: var(--red)
+}
+
+.horBar {
+    height: 83px;
+}
+
+.horBar:not(:last-child) {
+    border-bottom: 1px solid var(--grayC4);
+}
+
+.yAxis {
+    margin: 0 auto;
+}
+
+.yAxisItem {
+    padding-top: 72px;
+    height: 11px;
+    text-align: center;
+}
+
+.xAxis {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 55px;
+    background-color: var(--grayEC);
+}
+
+.footer {
+    display: flex;
+    width: 100%;
+}

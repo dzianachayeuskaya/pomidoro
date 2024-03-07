@@ -1,3 +1,31 @@
+:root {
+  --black: #333333;
+  --red: #dc3e22;
+  --dark-red: #B7280F;
+  --peach: 234, 138, 121;
+  --orange: rgb(255, 221, 169);
+  --dark-orange: rgb(255, 174, 53);
+  --violet: #DFDCFE;
+  --dark-violet: #9C97D7;
+  --blue: #C5F1FF;
+  --dark-blue: #7FC2D7;
+  --green: #A8B64F;
+  --dark-green: #899441;
+  --whiteLightness: 100%;
+  --white: hsl(0, 0%, var(--whiteLightness));
+  --grayF4: hsl(0, 0%, calc(var(--whiteLightness) - 4%));
+  --grayF3: hsl(0, 0%, calc(var(--whiteLightness) - 5%));
+  --grayEC: hsl(0, 0%, calc(var(--whiteLightness) - 7%));
+  --grayDE: hsl(0, 0%, calc(var(--whiteLightness) - 13%));
+  --grayD9: hsl(0, 0%, calc(var(--whiteLightness) - 15%));
+  --grayC4: hsl(0, 0%, calc(var(--whiteLightness) - 23%));
+  --gray99: hsl(0, 0%, calc(var(--whiteLightness) - 40%));
+  --gray66: hsl(0, 0%, calc(var(--whiteLightness) - 60%));
+  --s-max-width: 300px;
+  --m-max-width: 700px;
+  --l-max-width: 1280px;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +38,131 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+ul,
+ol {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:active {
+  color: unset;
+}
+
+*:focus-visible {
+  outline: 1px solid var(--green);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+input {
+  margin: 0;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+button {
+  background-color: none;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 500;
+  transition: all 0.1s ease;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+.primaryBtn {
+  padding: 20px 50px;
+  color: var(--white);
+  background-color: var(--green);
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.primaryBtn:focus-visible,
+.secondaryBtn:focus-visible {
+  opacity: 0.8;
+  background-color: var(--green);
+}
+
+.primaryBtn:disabled,
+.primaryBtn:disabled:hover,
+.primaryBtn:disabled:active {
+  opacity: 0.5;
+  background-color: var(--green);
+}
+
+.secondaryBtn {
+  padding: 19px 50px;
+  border: 2px solid var(--red);
+  color: var(--red);
+  transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+}
+
+.secondaryBtn:disabled,
+.secondaryBtn:disabled:hover,
+.secondaryBtn:disabled:active {
+  color: var(--grayC4);
+  border: 2px solid var(--grayC4);
+  opacity: 1;
+  background-color: transparent;
+}
+
+.secondaryBtn.active {
+  border: 2px solid var(--red);
+  opacity: 1;
+  color: var(--white);
+  background-color: var(--red);
+  transition: opacity 0.3s ease, background-color 0.3s ease, border 0.3s ease;
+}
+
+.secondaryBtn.active:focus-visible {
+  opacity: 0.8;
+  background-color: var(--red);
+}
+
+.secondaryBtn.active:disabled,
+.secondaryBtn.active:disabled:hover,
+.secondaryBtn.active:disabled:active {
+  opacity: 0.5;
+  background-color: var(--green);
+}
+
+@media (min-width: 768px) {
+
+  .primaryBtn:hover,
+  .primaryBtn:active {
+    opacity: 1;
+    background-color: var(--dark-green);
+  }
+
+  .secondaryBtn:hover,
+  .secondaryBtn:active {
+    color: var(--white);
+    border: 2px solid var(--red);
+    opacity: 1;
+    background-color: var(--red);
+  }
+
+  .secondaryBtn.active:hover,
+  .secondaryBtn.active:active {
+    border: 2px solid var(--dark-red);
+    opacity: 1;
+    background-color: var(--dark-red);
+  }
 }
