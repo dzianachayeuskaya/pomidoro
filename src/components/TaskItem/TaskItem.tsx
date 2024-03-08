@@ -96,7 +96,13 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
         if (task.id === id) {
           if (task.pomidorArray.length < 2) {
             setErrorMessage(
-              'Если уменьшить количество помидоров, их не останется.'
+              'Если уменьшить количество "помидоров", их не останется.'
+            );
+            return task;
+          }
+          if (task.pomidorArray.at(-1)?.activeIntervals?.[0].start) {
+            setErrorMessage(
+              'Возможно удаление только тех "помидоров", работа с которыми еще не начиналась.'
             );
             return task;
           }
