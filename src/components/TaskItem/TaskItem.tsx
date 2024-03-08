@@ -17,6 +17,7 @@ import { Text } from '../Text';
 import { Break } from '../Break';
 import { ModalWindow } from '../ModalWindow';
 import { ErrorMessage } from '../ErrorMessage';
+import classNames from 'classnames';
 
 export function TaskItem({ id, title, pomidorArray }: ITask) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,6 +28,47 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
   const setTaskList = useSetRecoilState(taskListState);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  };
+
+  const onSave = () => {
+    if (value.trim().length < 3 || value.trim().length > 255) {
+      setErrorMessage('Введите корректное название задачи');
+      setIsEditing(true);
+      inputRef.current?.focus();
+      return;
+    }
+
+    setTaskList((oldTaskList) =>
+      oldTaskList.map((item) => {
+        if (item.id === id) {
+          return { ...item, title: value.trim() };
+        }
+        return item;
+      })
+    );
+    setErrorMessage('');
+    setIsEditing(false);
+    setValue(value.trim());
+  };
+
+  const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') onSave();
+  };
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) inputRef.current.focus();
+  }, [isEditing]);
+
+  useEffect(() => {
+    if (bufferRef.current) {
+      setWidth(bufferRef.current.getBoundingClientRect().width);
+    }
+  }, [value]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleIncreaseClick = () => {
     setTaskList((oldTaskList) =>
@@ -69,56 +111,14 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
     );
   };
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value.replace(/ /g, '\u00a0'));
-    console.log(e.target.value.replace(/ /g, '\u00a0'));
-
-    if (bufferRef.current) {
-      setWidth(bufferRef.current.getBoundingClientRect().width);
-      console.log(
-        'bufferRef.current.getBoundingClientRect().width',
-        bufferRef.current.getBoundingClientRect().width
-      );
-    }
-  };
-
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
-  const onSave = () => {
-    if (value.trim().length < 3 || value.trim().length > 255) {
-      setErrorMessage('Введите корректное название задачи');
-      setIsEditing(true);
-      inputRef.current?.focus();
-      return;
-    }
-
-    setTaskList((oldTaskList) =>
-      oldTaskList.map((item) => {
-        if (item.id === id) {
-          return { ...item, title: value.trim() };
-        }
-        return item;
-      })
-    );
-    setErrorMessage('');
-    setIsEditing(false);
-  };
-
-  const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') onSave();
-  };
-
-  useEffect(() => {
-    if (isEditing && inputRef.current) inputRef.current.focus();
-  }, [isEditing]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleDeleteClick = () => {
     setIsModalOpen(true);
   };
+
   const onDelete = () => {
     setTaskList((oldList) =>
       oldList.map((item) => {
@@ -128,6 +128,7 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
     );
     navigate('/');
   };
+
   const onCancel = () => {
     setIsModalOpen(false);
   };
@@ -143,23 +144,30 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
   //   // }
   // }, [errorMessage]);
   return (
-    <li key={id} className={styles.taskItem}>
+    <li
+      key={id}
+      className={classNames(styles.taskItem, {
+        [styles.isEditable]: isEditing,
+      })}>
       <Link to={`/task/${id}`}>
         <span className={styles.taskNumber}>{pomidorArray.length}</span>
-        <input
-          className={styles.taskValueInput}
-          value={value}
-          name={title}
-          disabled={!isEditing}
-          ref={inputRef}
-          type='text'
-          onChange={onChange}
-          onBlur={onSave}
-          onKeyUp={onKeyUp}
-          style={{ width: `${width}px` }}
-        />
+        <div
+          className={styles.taskValueWrapper}
+          style={{ width: `${width + 8}px` }}>
+          <input
+            className={styles.taskValueInput}
+            ref={inputRef}
+            value={value}
+            name={title}
+            disabled={!isEditing}
+            type='text'
+            onChange={onChange}
+            onBlur={onSave}
+            onKeyUp={onKeyUp}
+          />
+        </div>
         <div ref={bufferRef} className={styles.inputBuffer}>
-          {value}
+          {value.replace(/ /g, '\u00a0')}
         </div>
       </Link>
 
