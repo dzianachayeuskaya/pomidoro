@@ -27,9 +27,9 @@ export function formatTimeToStringWithWord(time: number): string {
   const hours = Math.floor(time / 1000 / 60 / 60);
   console.log(`min: ${min}, hours: ${hours}`);
 
-  return `${hours ? `${hours} ${declOfNum(hours, ['часа', 'часов'])}` : ''} ${
-    min ? `${min} ${declOfNum(min, ['минуты', 'минут'])}` : ''
-  }`;
+  return `${
+    hours ? `${hours} ${declOfNum(hours, ['часа', 'часов', 'часов'])}` : ''
+  } ${min ? `${min} ${declOfNum(min, ['минуты', 'минут', 'минут'])}` : ''}`;
 }
 export function formatTimeToShortString(time: number): string {
   const min = Math.ceil(time / 1000 / 60) % 60;
