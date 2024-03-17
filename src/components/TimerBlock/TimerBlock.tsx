@@ -21,7 +21,8 @@ enum EActions {
   pauseTimer = 'pauseTimer',
   finishTimer = 'finishTimer',
   addPomidor = 'addPomidor',
-  addPurePomidor = 'addPurePomidor',
+  addActivePomidor = 'addActivePomidor',
+  addEmptyPomidor = 'addEmptyPomidor',
   addBreak = 'addBreak',
   complete = 'complete',
 }
@@ -43,6 +44,7 @@ export function TimerBlock() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [targetTask, setTargetTask] = useState<ITask | null>(null);
+  const [activePomidorIndex, setActivePomidorIndex] = useState(0);
   const timerIdRef = useRef<NodeJS.Timeout | null>(null);
 
   const [currentTime, setCurrentTime] = useState(
@@ -74,16 +76,22 @@ export function TimerBlock() {
         }
       }
 
+      const addPomidorAction =
+        addAction === EActions.addPomidor ||
+        addAction === EActions.addActivePomidor;
+
       setTaskList((oldList) =>
         oldList.map((timer) => {
           if (timer.id === taskId) {
-            let lastPomidor = timer.pomidorArray.at(-1);
+            let currentPomidor =
+              timer.pomidorArray.find((pomidor) => pomidor.isCurrent) ||
+              timer.pomidorArray.at(-1);
 
-            if (lastPomidor) {
+            if (currentPomidor) {
               const newActiveIntervalArr: IActiveInterval[] =
                 (isPomidor
-                  ? lastPomidor.activeIntervals
-                  : lastPomidor.break.activeIntervals) || [];
+                  ? currentPomidor.activeIntervals
+                  : currentPomidor.break.activeIntervals) || [];
 
               if (newProps.start) {
                 newProps = {
@@ -93,19 +101,10 @@ export function TimerBlock() {
                   }),
                 };
 
-                // newProps = {
-                //   ...newProps,
-                //   activeIntervals: (
-                //     lastPomidor.activeIntervals || newActiveIntervalArr
-                //   ).concat({ start: newProps.start }),
-                // };
                 delete newProps.start;
               }
 
               if (newProps.pause) {
-                // const newActiveIntervalArr: IActiveInterval[] =
-                //   lastPomidor.activeIntervals || [];
-
                 let lastActiveInterval = newActiveIntervalArr.at(-1);
                 if (lastActiveInterval) {
                   lastActiveInterval = {
@@ -126,58 +125,84 @@ export function TimerBlock() {
 
               if (
                 newProps.finish && isPomidor
-                  ? lastPomidor.activeIntervals?.at(-1)?.pause
-                  : lastPomidor.break.activeIntervals?.at(-1)?.pause
+                  ? currentPomidor.activeIntervals?.at(-1)?.pause
+                  : currentPomidor.break.activeIntervals?.at(-1)?.pause
               ) {
                 newProps.finish = isPomidor
-                  ? lastPomidor.activeIntervals?.at(-1)?.pause
-                  : lastPomidor.break.activeIntervals?.at(-1)?.pause;
-                // lastPomidor.activeIntervals?.at(-1)?.pause;
+                  ? currentPomidor.activeIntervals?.at(-1)?.pause
+                  : currentPomidor.break.activeIntervals?.at(-1)?.pause;
               }
 
-              lastPomidor = isPomidor
-                ? { ...lastPomidor, ...newProps }
+              const isCurrent = addPomidorAction
+                ? false
+                : currentPomidor.isCurrent;
+
+              currentPomidor = isPomidor
+                ? {
+                    ...currentPomidor,
+                    isCurrent,
+                    ...newProps,
+                  }
                 : {
-                    ...lastPomidor,
+                    ...currentPomidor,
+                    isCurrent,
                     break: {
-                      ...lastPomidor.break,
+                      ...currentPomidor.break,
                       ...newProps,
                     },
                   };
-              const pomidorArrayWithoutLastPomidor = timer.pomidorArray.slice(
-                0,
-                -1
-              );
-              const updatedArray =
-                addAction === EActions.addBreak
-                  ? [
-                      ...pomidorArrayWithoutLastPomidor,
-                      {
-                        ...lastPomidor,
+
+              const updatedArray = timer.pomidorArray.map((pomidor) => {
+                if (pomidor.pomidorId === currentPomidor?.pomidorId) {
+                  return addAction === EActions.addBreak
+                    ? {
+                        ...currentPomidor,
                         break: {
-                          pomidorId: lastPomidor.pomidorId,
+                          pomidorId: currentPomidor.pomidorId,
                           isActive: isTimerActive,
                           activeIntervals: isTimerActive
                             ? [{ start: Date.now() }]
                             : undefined,
                         },
-                      },
-                    ]
-                  : addAction === EActions.addPomidor ||
-                    action === EActions.addPurePomidor
-                  ? [
-                      ...pomidorArrayWithoutLastPomidor,
-                      lastPomidor,
-                      {
-                        pomidorId: timer.pomidorArray.length,
-                        isActive: false,
-                        break: {
-                          pomidorId: timer.pomidorArray.length,
-                          isActive: false,
-                        },
-                      },
-                    ]
-                  : [...pomidorArrayWithoutLastPomidor, lastPomidor];
+                      }
+                    : currentPomidor;
+                }
+
+                if (
+                  addPomidorAction &&
+                  currentPomidor?.pomidorId &&
+                  pomidor.pomidorId === currentPomidor.pomidorId + 1
+                ) {
+                  return addAction === EActions.addPomidor
+                    ? { ...pomidor, isCurrent: true }
+                    : {
+                        ...pomidor,
+                        isCurrent: true,
+                        isActive: isTimerActive,
+                        activeIntervals: isTimerActive
+                          ? [{ start: Date.now() }]
+                          : undefined,
+                      };
+                }
+
+                return pomidor;
+              });
+
+              if (
+                (addPomidorAction &&
+                  currentPomidor.pomidorId === timer.pomidorArray.length - 1) ||
+                action === EActions.addEmptyPomidor
+              ) {
+                updatedArray.push({
+                  pomidorId: updatedArray.length,
+                  isActive: false,
+                  isCurrent: addPomidorAction,
+                  break: {
+                    pomidorId: updatedArray.length,
+                    isActive: false,
+                  },
+                });
+              }
 
               return {
                 ...timer,
@@ -207,14 +232,15 @@ export function TimerBlock() {
     }
   };
 
-  const pauseTimer = () => {
+  const pauseTimer = useCallback(() => {
+    console.log('pauseTimer');
     if (isTimerActive) {
       changeList(EActions.pauseTimer);
       clearTimerIdRef();
       setIsTimerActive(false);
       setIsPause(true);
     }
-  };
+  }, [changeList, isTimerActive]);
 
   const finishTimer = useCallback(
     (action: EActions) => {
@@ -225,19 +251,17 @@ export function TimerBlock() {
   );
 
   const onNext = useCallback(() => {
-    finishTimer(isPomidor ? EActions.addBreak : EActions.addPomidor);
+    finishTimer(isPomidor ? EActions.addBreak : EActions.addActivePomidor);
     setIsPomidor(!isPomidor);
     console.log('onNext', isPomidor);
 
     setCurrentTime(isPomidor ? breakTime : pomidorTime);
-  }, [isPomidor, pomidorTime, breakTime, finishTimer]);
+  }, [finishTimer, isPomidor, breakTime, pomidorTime]);
 
-  const onDone = () => {
+  const onSkip = () => {
     finishTimer(EActions.addPomidor);
-    // if (!isPomidor) {
     setIsPomidor(true);
-    console.log('onDone', isPomidor);
-    // }
+    console.log('onSkip', isPomidor);
 
     setCurrentTime(pomidorTime);
     setIsTimerActive(false);
@@ -252,52 +276,78 @@ export function TimerBlock() {
   };
 
   const addPomidor = () => {
-    if (!targetTask?.isCompleted) changeList(EActions.addPurePomidor);
+    if (!targetTask?.isCompleted) changeList(EActions.addEmptyPomidor);
     else setErrorMessage('Эта задача уже завершена.');
   };
 
   useEffect(() => {
     const targetTask = taskList.find((task) => task.id === taskId);
-    console.log('taskList', JSON.stringify(taskList), 'taskId', taskId);
 
     if (targetTask) {
+      setIsCompleted(targetTask.isCompleted);
       setTargetTask(targetTask);
+
+      const currentPomidorIndex = targetTask.pomidorArray.findIndex(
+        (pomidor) => pomidor.isCurrent
+      );
+      const activePomidorIndex =
+        currentPomidorIndex > -1
+          ? currentPomidorIndex
+          : targetTask.pomidorArray.length - 1;
+      setActivePomidorIndex(activePomidorIndex);
+
+      const activePomidor = targetTask.pomidorArray[activePomidorIndex];
+      const isPomidor = !activePomidor.finish;
+      setIsTimerActive(
+        isPomidor ? activePomidor.isActive : activePomidor.break.isActive
+      );
+      const isPaused = isPomidor
+        ? !!activePomidor.activeIntervals?.at(-1)?.pause
+        : !!activePomidor.break.activeIntervals?.at(-1)?.pause;
+      setIsPause(isPaused);
+
+      setIsPomidor(isCompleted || isPomidor);
+
+      setIsPomidorNew(
+        isPomidor
+          ? !activePomidor.activeIntervals?.[0].start
+          : !activePomidor.break.activeIntervals?.[0].start
+      );
       setErrorMessage('');
-      const lastPomidor = targetTask.pomidorArray.at(-1);
-      if (lastPomidor?.finish) {
-        setIsPomidor(false);
-        setIsPause(true);
+
+      if (isPaused) {
+        const elapsedTime =
+          (isPomidor
+            ? activePomidor?.activeIntervals
+            : activePomidor?.break.activeIntervals
+          )?.reduce((acc, curr) => {
+            return curr.pause ? acc + (curr.pause - curr.start) : acc;
+          }, 0) || 0;
+        console.log('elapsed time: ', elapsedTime);
+
+        setCurrentTime((isPomidor ? pomidorTime : breakTime) - elapsedTime);
+      } else if (isPomidorNew) {
+        setCurrentTime(isPomidor ? pomidorTime : breakTime);
+        console.log('isPomidorNew');
       }
-
-      // if (
-      //   lastPomidor?.activeIntervals?.at(-1)?.start ||
-      //   lastPomidor?.break.activeIntervals?.at(-1)?.start
-      // ) {
-      //   const pauseTime = isPomidor
-      //     ? lastPomidor?.activeIntervals?.at(-1)?.pause
-      //     : lastPomidor?.break.activeIntervals?.at(-1)?.pause;
-      //   const startTime = isPomidor
-      //     ? lastPomidor?.activeIntervals?.at(-1)?.start
-      //     : lastPomidor?.break.activeIntervals?.at(-1)?.start;
-
-      //   if (pauseTime && startTime && !isTimerActive) {
-      //     setCurrentTime(
-      //       (isPomidor ? pomidorTime : breakTime) - (pauseTime - startTime)
-      //     );
-      //   }
-      // }
-      console.log('taskList');
-
-      if (targetTask.isCompleted) setIsCompleted(true);
     } else setErrorMessage(`Задача с id "${taskId}" не существует`);
-  }, [taskList, taskId, isPomidor, pomidorTime, breakTime, isTimerActive]);
+  }, [
+    taskList,
+    taskId,
+    isPomidor,
+    pomidorTime,
+    breakTime,
+    isTimerActive,
+    isCompleted,
+    isPomidorNew,
+  ]);
 
   useEffect(() => {
-    if (currentTime < 1000) onNext();
+    if (currentTime < 0) onNext();
     if (!timerIdRef.current && targetTask && isTimerActive)
       timerIdRef.current = setInterval(() => {
-        setCurrentTime((prev) => prev - 1000);
-      }, 1000);
+        setCurrentTime((prev) => prev - (prev % 1000 || 1000));
+      }, currentTime % 1000 || 1000);
     console.log('targetTask', targetTask, 'isTimerActive', isTimerActive);
 
     return () => {
@@ -324,7 +374,7 @@ export function TimerBlock() {
             </Text>
             <Text size={16} color={EColor.white}>
               {isPomidor ? 'Помидор ' : 'Перерыв '}
-              {targetTask.pomidorArray.length}
+              {activePomidorIndex + 1}
             </Text>
           </div>
           <div className={styles.timerBody}>
@@ -367,7 +417,7 @@ export function TimerBlock() {
                   {!isPause && isPomidor && (
                     <button
                       className='secondaryBtn'
-                      onClick={onDone}
+                      onClick={onSkip}
                       disabled={
                         !isTimerActive && targetTask.pomidorArray.length === 1
                       }>
@@ -387,7 +437,7 @@ export function TimerBlock() {
                   )}
 
                   {!isPomidor && (
-                    <button className='secondaryBtn' onClick={onDone}>
+                    <button className='secondaryBtn' onClick={onSkip}>
                       Пропустить
                     </button>
                   )}

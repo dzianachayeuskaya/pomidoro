@@ -55,6 +55,7 @@ export function MainContent() {
           {
             pomidorId: 0,
             isActive: false,
+            isCurrent: true,
             break: { pomidorId: 0, isActive: false },
           },
         ],

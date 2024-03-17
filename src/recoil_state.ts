@@ -8,9 +8,10 @@ export interface IActiveInterval {
 export interface ITimeInterval {
   pomidorId: number;
   isActive: boolean;
+  isCurrent: boolean;
   activeIntervals?: IActiveInterval[];
   finish?: number;
-  break: Omit<ITimeInterval, 'break' | 'isCompleted'>;
+  break: Omit<ITimeInterval, 'break' | 'isCompleted' | 'isCurrent'>;
 }
 
 export interface ITask {

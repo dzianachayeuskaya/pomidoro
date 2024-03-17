@@ -73,7 +73,11 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
   const handleIncreaseClick = () => {
     setTaskList((oldTaskList) =>
       oldTaskList.map((task) => {
-        if (task.id === id)
+        if (task.id === id) {
+          if (task.isCompleted) {
+            setErrorMessage('Выполнение задачи завершено.');
+            return task;
+          }
           return {
             ...task,
             pomidorArray: [
@@ -81,10 +85,13 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
               {
                 pomidorId: pomidorArray.length,
                 isActive: false,
+                isCurrent: false,
                 break: { pomidorId: pomidorArray.length, isActive: false },
               },
             ],
           };
+        }
+
         return task;
       })
     );
