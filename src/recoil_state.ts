@@ -81,26 +81,29 @@ const statDataState = selector({
 
     let daysToSubtract = 0;
     let daysToAdd = 0;
+    const todayNumber = today.getDay();
 
+    const currentDaysToSubtract = todayNumber === 0 ? 6 : todayNumber - 1;
+    const currentDaysToAdd = todayNumber === 0 ? todayNumber : 7 - todayNumber;
     switch (filter) {
       case EFilter.current:
-        daysToSubtract = today.getDay() - 1;
-        daysToAdd = 7 - today.getDay();
+        daysToSubtract = currentDaysToSubtract;
+        daysToAdd = currentDaysToAdd;
         break;
       case EFilter.last:
-        daysToSubtract = today.getDay() + 6;
-        daysToAdd = -today.getDay();
+        daysToSubtract = currentDaysToSubtract + 7;
+        daysToAdd = currentDaysToAdd - 7;
         break;
       case EFilter.beforeLast:
-        daysToSubtract = today.getDay() + 13;
-        daysToAdd = -7 - today.getDay();
+        daysToSubtract = currentDaysToSubtract + 14;
+        daysToAdd = currentDaysToAdd - 14;
         break;
     }
 
-    weekStartDate.setDate(today.getDate() - daysToSubtract);
+    weekStartDate.setDate(todayNumber - daysToSubtract);
     weekStartDate.setHours(0, 0, 0, 0);
 
-    weekEndDate.setDate(today.getDate() + daysToAdd);
+    weekEndDate.setDate(todayNumber + daysToAdd);
     weekEndDate.setHours(23, 59, 59, 999);
 
     console.log('weekStartDate', weekStartDate);
