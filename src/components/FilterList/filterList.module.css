@@ -1,0 +1,78 @@
+.selectWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: max(calc(100vw / 4), 150px);
+}
+
+.selectTitle {
+  padding: 20px 15px;
+  background-color: var(--grayF4);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.selectTitle::before,
+.selectTitle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 22px;
+  display: inline-block;
+  width: 10px;
+  height: 2px;
+  background-color: var(--dark-red);
+  transition: transform .3s ease
+}
+
+.selectTitle::before {
+  transform: translate(-3px, -50%) rotate(45deg);
+}
+
+.selectTitle::after {
+  transform: translate(3px, -50%) rotate(-45deg);
+}
+
+.selectWrapper.isOpen .selectTitle::before {
+  transform: translate(-3px, -50%) rotate(-45deg);
+}
+
+.selectWrapper.isOpen .selectTitle::after {
+  transform: translate(3px, -50%) rotate(45deg);
+}
+
+.selectContent {
+  position: absolute;
+  top: 58px;
+  right: 0;
+  display: none;
+  z-index: 1000;
+}
+
+.selectWrapper.isOpen .selectContent {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  background-color: var(--grayF4);
+}
+
+.selectLabel {
+  padding: 20px 15px;
+  border-top: 1px solid var(--grayDE);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.selectLabel.isActive {
+  display: none
+}
+
+@media(min-width: 768px) {
+
+  .selectTitle:hover,
+  .selectLabel:hover,
+  .selectTitle:active,
+  .selectLabel:active {
+    background-color: var(--grayEC);
+  }
+}

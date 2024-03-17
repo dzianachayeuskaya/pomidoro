@@ -11,13 +11,13 @@ import { ITask, taskListState } from '../../recoil_state';
 import { Link, useNavigate } from 'react-router-dom';
 import { Dropdown } from '../Dropdown';
 import { EIcons, Icon } from '../Icon';
-import { MenuItemsList } from '../MenuItemsList';
 import { useSetRecoilState } from 'recoil';
 import { Text } from '../Text';
 import { Break } from '../Break';
 import { ModalWindow } from '../ModalWindow';
 import { ErrorMessage } from '../ErrorMessage';
 import classNames from 'classnames';
+import { MenuItemsList, Option } from '../MenuItemsList';
 
 export function TaskItem({ id, title, pomidorArray }: ITask) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -156,6 +156,22 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
   //   //    timeoutIdRef && clearInterval(timeoutIdRef);
   //   // }
   // }, [errorMessage]);
+
+  const options: Option[] = [
+    {
+      value: 'Увеличить',
+      handler: handleIncreaseClick,
+      iconName: EIcons.increase,
+    },
+    {
+      value: 'Уменьшить',
+      handler: handleDecreaseClick,
+      iconName: EIcons.decrease,
+    },
+    { value: 'Редактировать', handler: handleEditClick, iconName: EIcons.edit },
+    { value: 'Удалить', handler: handleDeleteClick, iconName: EIcons.delete },
+  ];
+
   return (
     <li
       key={id}
@@ -191,12 +207,7 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
           </button>
         }>
         <div className={styles.dropdown}>
-          <MenuItemsList
-            handleIncreaseClick={handleIncreaseClick}
-            handleDecreaseClick={handleDecreaseClick}
-            handleEditClick={handleEditClick}
-            handleDeleteClick={handleDeleteClick}
-          />
+          <MenuItemsList options={options} />
         </div>
       </Dropdown>
 

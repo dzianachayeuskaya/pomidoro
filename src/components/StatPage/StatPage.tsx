@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent, useEffect } from 'react';
+import React, { useState, MouseEvent } from 'react';
 import styles from './statPage.module.css';
 import { EColor, Text } from '../Text';
 import { EBlockType, StatBlock } from '../StatBlock';
@@ -6,12 +6,9 @@ import { Break } from '../Break';
 import classNames from 'classnames';
 import { EIcons, Icon } from '../Icon';
 import { declOfNum, formatTimeToStringWithWord } from '../../utils/functions';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  EFilter,
-  statDataState,
-  taskListFilterState,
-} from '../../recoil_state';
+import { useRecoilValue } from 'recoil';
+import { EFilter, statDataState } from '../../recoil_state';
+import { FilterList } from '../FilterList';
 
 enum EActiveDay {
   mon,
@@ -37,11 +34,11 @@ const yAxixList = ['1 ч 40 мин', '1 ч 15 мин', '50 мин', '25 мин']
 
 const activeDayOfWeek = new Date().getDay() ? new Date().getDay() - 1 : 6;
 
+const options = [EFilter.current, EFilter.last, EFilter.beforeLast];
+
 export function StatPage() {
   const [activeDay, setActiveDay] = useState(activeDayOfWeek);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [taskListFilter, setTaskListFilter] =
-    useRecoilState(taskListFilterState);
+
   const data = useRecoilValue(statDataState);
 
   const calculateDailyWorkPercentage = (day: EActiveDay) => {
@@ -69,58 +66,13 @@ export function StatPage() {
     }
   };
 
-  const onFilterOpen = () => {
-    setIsFilterOpen(!isFilterOpen);
-  };
-
-  const onSelect = (e: MouseEvent<HTMLDivElement>) => {
-    if (e.target instanceof HTMLElement) {
-      setTaskListFilter(e.target.getAttribute('data-value') as EFilter);
-    }
-  };
-
-  console.log('taskListFilter', taskListFilter, 'data', data);
   return (
     <div className={styles.content}>
       <div className={styles.header}>
         <Text As='h3' size={24} weight={700}>
           Ваша активность
         </Text>
-        <form>
-          <div
-            className={classNames(styles.selectWrapper, {
-              [styles.isOpen]: isFilterOpen,
-            })}
-            onClick={onFilterOpen}>
-            <div className={styles.selectTitle}>{taskListFilter}</div>
-            <div className={styles.selectContent}>
-              <div
-                className={classNames(styles.selectLabel, {
-                  [styles.isActive]: taskListFilter === EFilter.current,
-                })}
-                onClick={onSelect}
-                data-value={EFilter.current}>
-                {EFilter.current}
-              </div>
-              <div
-                className={classNames(styles.selectLabel, {
-                  [styles.isActive]: taskListFilter === EFilter.last,
-                })}
-                onClick={onSelect}
-                data-value={EFilter.last}>
-                {EFilter.last}
-              </div>
-              <div
-                className={classNames(styles.selectLabel, {
-                  [styles.isActive]: taskListFilter === EFilter.beforeLast,
-                })}
-                onClick={onSelect}
-                data-value={EFilter.beforeLast}>
-                {EFilter.beforeLast}
-              </div>
-            </div>
-          </div>
-        </form>
+        <FilterList options={options} />
       </div>
       <div className={styles.main}>
         <div className={styles.aside}>

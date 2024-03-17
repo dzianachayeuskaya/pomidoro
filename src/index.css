@@ -134,6 +134,7 @@ button:disabled {
 .secondaryBtn.active:focus-visible {
   opacity: 0.8;
   background-color: var(--red);
+  outline: none;
 }
 
 .secondaryBtn.active:disabled,
