@@ -101,10 +101,10 @@ const statDataState = selector({
         break;
     }
 
-    weekStartDate.setDate(todayNumber - daysToSubtract);
+    weekStartDate.setDate(today.getDate() - daysToSubtract);
     weekStartDate.setHours(0, 0, 0, 0);
 
-    weekEndDate.setDate(todayNumber + daysToAdd);
+    weekEndDate.setDate(today.getDate() + daysToAdd);
     weekEndDate.setHours(23, 59, 59, 999);
 
     console.log('weekStartDate', weekStartDate);
