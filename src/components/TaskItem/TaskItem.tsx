@@ -69,6 +69,7 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
   }, [value]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleIncreaseClick = () => {
     setTaskList((oldTaskList) =>
@@ -172,6 +173,20 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
     { value: 'Удалить', handler: handleDeleteClick, iconName: EIcons.delete },
   ];
 
+  const onOpen = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+  const onClose = () => {
+    setIsDropdownOpen(false);
+  };
+
+  const handleKeyUpOnItem = (key: string, handler: () => void) => {
+    if (key === 'Enter') {
+      handler();
+      setIsDropdownOpen(false);
+    }
+  };
+
   return (
     <li
       key={id}
@@ -205,9 +220,15 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
           <button className={styles.menuBtn} aria-label='Выпадающее меню'>
             <Icon name={EIcons.drop} />
           </button>
-        }>
+        }
+        isOpen={isDropdownOpen}
+        onOpen={onOpen}
+        onClose={onClose}>
         <div className={styles.dropdown}>
-          <MenuItemsList options={options} />
+          <MenuItemsList
+            options={options}
+            handleKeyUpOnItem={handleKeyUpOnItem}
+          />
         </div>
       </Dropdown>
 

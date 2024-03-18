@@ -9,7 +9,12 @@
   padding: 20px 15px;
   background-color: var(--grayF4);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease, outline 0.2s ease;
+}
+
+.selectTitle:focus-visible {
+  outline: 1px solid var(--dark-red);
+  z-index: 1001;
 }
 
 .selectTitle::before,
@@ -56,23 +61,45 @@
   background-color: var(--grayF4);
 }
 
-.selectLabel {
+.selectItem {
   padding: 20px 15px;
   border-top: 1px solid var(--grayDE);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease, outline 0.2s ease;
 }
 
-.selectLabel.isActive {
+.selectItem:focus-visible {
+  background-color: var(--grayEC);
+  outline: 1px solid var(--dark-red);
+  border-top: 1px solid var(--grayEC);
+  z-index: 1;
+}
+
+.selectItem.isActive {
   display: none
 }
 
+/* .selectItem.isSelected {
+  background-color: var(--grayEC);
+} */
+
 @media(min-width: 768px) {
 
+  .selectTitle:focus-visible:hover,
+  .selectTitle:focus-visible:active {
+    outline: none;
+  }
+
   .selectTitle:hover,
-  .selectLabel:hover,
+  .selectItem:hover,
   .selectTitle:active,
-  .selectLabel:active {
+  .selectItem:active {
     background-color: var(--grayEC);
+  }
+
+  .selectItem:focus-visible:hover,
+  .selectItem:focus-visible:active {
+    border-top: 1px solid var(--grayDE);
+    outline: none;
   }
 }

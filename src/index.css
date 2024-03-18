@@ -94,10 +94,17 @@ button:disabled {
   transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
-.primaryBtn:focus-visible,
-.secondaryBtn:focus-visible {
+.primaryBtn:focus-visible {
   opacity: 0.8;
   background-color: var(--green);
+  outline: none;
+}
+
+.secondaryBtn:focus-visible {
+  opacity: 0.8;
+  color: var(--white);
+  background-color: var(--red);
+  outline: none;
 }
 
 .primaryBtn:disabled,

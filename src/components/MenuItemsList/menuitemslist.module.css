@@ -23,8 +23,12 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  transition: background-color .3s ease;
+  transition: background-color .2s ease, outline .2s ease;
   cursor: pointer;
+}
+
+.menuItem:focus-visible {
+  background-color: var(--grayF4);
 }
 
 .menuItem>div {
@@ -37,5 +41,10 @@
   .menuItem:hover,
   .menuItem:active {
     background-color: var(--grayF4);
+  }
+
+  .menuItem:focus-visible:hover,
+  .menuItem:focus-visible:active {
+    outline: none;
   }
 }

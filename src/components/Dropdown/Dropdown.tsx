@@ -13,6 +13,8 @@ interface IDropdownProps {
   button: ReactNode;
   children: ReactNode;
   isOpen?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
 }
 
 interface IListStyleState {
@@ -20,10 +22,13 @@ interface IListStyleState {
   right: number;
 }
 
-export function Dropdown({ button, children, isOpen }: IDropdownProps) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(isOpen);
-  useEffect(() => setIsDropdownOpen(isOpen), [isOpen]);
-
+export function Dropdown({
+  button,
+  children,
+  isOpen,
+  onOpen,
+  onClose,
+}: IDropdownProps) {
   const portalNode = document.getElementById('dropdownRoot');
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -38,15 +43,18 @@ export function Dropdown({ button, children, isOpen }: IDropdownProps) {
     setListStyle(determineRect(containerRef));
   };
 
-  const handleClickCb = useCallback(function handleClick(event: MouseEvent) {
-    determineCoords();
-    if (
-      event.target instanceof Node &&
-      !buttonRef.current?.contains(event.target)
-    ) {
-      setIsDropdownOpen(false);
-    }
-  }, []);
+  const handleClickCb = useCallback(
+    function handleClick(event: MouseEvent) {
+      determineCoords();
+      if (
+        event.target instanceof Node &&
+        !buttonRef.current?.contains(event.target)
+      ) {
+        if (onClose) onClose();
+      }
+    },
+    [onClose]
+  );
 
   useEffect(() => {
     document.addEventListener('click', handleClickCb);
@@ -58,16 +66,12 @@ export function Dropdown({ button, children, isOpen }: IDropdownProps) {
     };
   }, [handleClickCb]);
 
-  const handleOpen = () => {
-    if (isOpen === undefined) setIsDropdownOpen(!isDropdownOpen);
-  };
-
   return (
     <div ref={containerRef}>
-      <div className={styles.btn} ref={buttonRef} onClick={handleOpen}>
+      <div className={styles.btn} ref={buttonRef} onClick={onOpen}>
         {button}
       </div>
-      {isDropdownOpen &&
+      {isOpen &&
         portalNode &&
         ReactDOM.createPortal(
           <div className={styles.list} style={listStyle}>
