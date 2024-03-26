@@ -4,16 +4,17 @@ import {
   IActiveInterval,
   ITask,
   ITimeInterval,
+  errorMessageState,
   taskListState,
   timeIntervalState,
 } from '../../recoil_state';
 import { EColor, Text } from '../Text';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 import { Break } from '../Break';
 import { formatTimeToStringWithColon } from '../../utils/functions';
-import { ErrorMessage } from '../ErrorMessage';
+// import { ErrorMessage } from '../ErrorMessage';
 import { EIcons, Icon } from '../Icon';
 
 enum EActions {
@@ -42,7 +43,7 @@ export function TimerBlock() {
   const [isPomidor, setIsPomidor] = useState(true);
   const [isPomidorNew, setIsPomidorNew] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const setErrorMessage = useSetRecoilState(errorMessageState);
   const [targetTask, setTargetTask] = useState<ITask | null>(null);
   const [activePomidorIndex, setActivePomidorIndex] = useState(0);
   const timerIdRef = useRef<NodeJS.Timeout | null>(null);
@@ -344,6 +345,7 @@ export function TimerBlock() {
     isTimerActive,
     isCompleted,
     isPomidorNew,
+    setErrorMessage,
   ]);
 
   useEffect(() => {
@@ -454,7 +456,7 @@ export function TimerBlock() {
           </div>
         </div>
       )}
-      {errorMessage && <ErrorMessage message={errorMessage} />}
+      {/* {errorMessage && <ErrorMessage message={errorMessage} />} */}
     </>
   );
 }

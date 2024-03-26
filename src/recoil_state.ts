@@ -250,15 +250,15 @@ const timeIntervalState = atom<IPomidorInterval>({
       },
 });
 
-// const errorMessageState = atom({
-//   key: 'errorMessageState',
-//   default: '',
-// });
+const errorMessageState = atom({
+  key: 'errorMessageState',
+  default: '',
+});
 export {
   titleState,
   taskListState,
   statDataState,
   timeIntervalState,
   taskListFilterState,
-  // errorMessageState
+  errorMessageState,
 };

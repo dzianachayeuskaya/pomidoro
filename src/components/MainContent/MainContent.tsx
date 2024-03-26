@@ -1,14 +1,21 @@
 import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import styles from './mainContent.module.css';
 import { UlList } from '../UlList';
-import { useRecoilState } from 'recoil';
-import { taskListState, titleState } from '../../recoil_state';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  errorMessageState,
+  taskListState,
+  titleState,
+} from '../../recoil_state';
 import { Break } from '../Break';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { getRandomAlphanumericString } from '../../utils/functions';
 import { TaskItem } from '../TaskItem';
 import { EColor, Text } from '../Text';
 // import { ErrorMessage } from '../ErrorMessage';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const list = [
   'Выберите категорию и напишите название текущей задачи',
@@ -24,7 +31,8 @@ export function MainContent() {
   const navigate = useNavigate();
 
   const [isTouched, setIsTouched] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [validationError, setValidationError] = useState('');
+  const errorMessage = useRecoilValue(errorMessageState);
 
   useEffect(() => {
     localStorage.setItem('taskList', JSON.stringify(taskList));
@@ -34,18 +42,19 @@ export function MainContent() {
     const currentValue = e.target.value;
     setTaskTitle(currentValue);
     if (isTouched && currentValue.length >= 3 && currentValue.length <= 255)
-      setErrorMessage('');
-    else if (isTouched) setErrorMessage('Введите корректное название задачи');
+      setValidationError('');
+    else if (isTouched)
+      setValidationError('Введите корректное название задачи');
   };
 
   const addTask = () => {
     if (taskTitle.trim().length < 3 || taskTitle.trim().length > 255) {
       setIsTouched(true);
-      setErrorMessage('Введите корректное название задачи');
+      setValidationError('Введите корректное название задачи');
       return;
     }
 
-    setErrorMessage('');
+    setValidationError('');
     const taskId = getRandomAlphanumericString(8);
     setTaskList((oldTaskList) => [
       {
@@ -78,9 +87,13 @@ export function MainContent() {
   const handleBlur = () => {
     if (!taskTitle) {
       setIsTouched(false);
-      setErrorMessage('');
+      setValidationError('');
     }
   };
+
+  useEffect(() => {
+    if (errorMessage) toast(errorMessage);
+  }, [errorMessage]);
 
   return (
     <div className={styles.mainContent}>
@@ -97,11 +110,11 @@ export function MainContent() {
             onChange={handleChange}
             onKeyUp={handleKeyUp}
             onBlur={handleBlur}
-            aria-invalid={errorMessage ? 'true' : undefined}
+            aria-invalid={validationError ? 'true' : undefined}
           />
-          {errorMessage && (
+          {validationError && (
             <Text size={12} color={EColor.grayC4}>
-              {errorMessage}
+              {validationError}
             </Text>
           )}
 
@@ -109,7 +122,7 @@ export function MainContent() {
           <button
             className='primaryBtn'
             onClick={addTask}
-            disabled={!!errorMessage && isTouched}>
+            disabled={!!validationError && isTouched}>
             Добавить
           </button>
 
@@ -125,6 +138,12 @@ export function MainContent() {
         </div>
       </div>
       {/* {errorMessage && <ErrorMessage message={errorMessage} />} */}
+      <ToastContainer
+        position='bottom-right'
+        autoClose={3000}
+        hideProgressBar={true}
+        pauseOnHover={false}
+      />
       <Outlet />
     </div>
   );

@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import styles from './taskItem.module.css';
 
-import { ITask, taskListState } from '../../recoil_state';
+import { ITask, errorMessageState, taskListState } from '../../recoil_state';
 import { Link, useNavigate } from 'react-router-dom';
 import { Dropdown } from '../Dropdown';
 import { EIcons, Icon } from '../Icon';
@@ -15,11 +15,11 @@ import { useSetRecoilState } from 'recoil';
 import { Text } from '../Text';
 import { Break } from '../Break';
 import { ModalWindow } from '../ModalWindow';
-import { ErrorMessage } from '../ErrorMessage';
+// import { ErrorMessage } from '../ErrorMessage';
 import classNames from 'classnames';
 import { MenuItemsList, Option } from '../MenuItemsList';
 
-export function TaskItem({ id, title, pomidorArray }: ITask) {
+export function TaskItem({ id, title, pomidorArray, isCompleted }: ITask) {
   const inputRef = useRef<HTMLInputElement>(null);
   const bufferRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -27,10 +27,12 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
   const [width, setWidth] = useState(title.length * 8);
   const setTaskList = useSetRecoilState(taskListState);
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState('');
+  const setErrorMessage = useSetRecoilState(errorMessageState);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
+    if (value.trim().length >= 3 && value.trim().length <= 255)
+      setErrorMessage('');
   };
 
   const onSave = () => {
@@ -72,56 +74,57 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleIncreaseClick = () => {
-    setTaskList((oldTaskList) =>
-      oldTaskList.map((task) => {
-        if (task.id === id) {
-          if (task.isCompleted) {
-            setErrorMessage('Выполнение задачи завершено.');
-            return task;
-          }
-          return {
-            ...task,
-            pomidorArray: [
-              ...pomidorArray,
-              {
-                pomidorId: pomidorArray.length,
-                isActive: false,
-                isCurrent: false,
-                break: { pomidorId: pomidorArray.length, isActive: false },
-              },
-            ],
-          };
-        }
+    if (isCompleted) {
+      setErrorMessage('Выполнение задачи завершено.');
+      return;
+    }
+    setErrorMessage('');
 
-        return task;
-      })
+    setTaskList((oldTaskList) =>
+      oldTaskList.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              pomidorArray: [
+                ...pomidorArray,
+                {
+                  pomidorId: pomidorArray.length,
+                  isActive: false,
+                  isCurrent: false,
+                  break: { pomidorId: pomidorArray.length, isActive: false },
+                },
+              ],
+            }
+          : task
+      )
     );
   };
 
   const handleDecreaseClick = () => {
-    setTaskList((oldTaskList) =>
-      oldTaskList.map((task) => {
-        if (task.id === id) {
-          if (task.pomidorArray.length < 2) {
-            setErrorMessage(
-              'Если уменьшить количество "помидоров", их не останется.'
-            );
-            return task;
-          }
-          if (task.pomidorArray.at(-1)?.activeIntervals?.[0].start) {
-            setErrorMessage(
-              'Возможно удаление только тех "помидоров", работа с которыми еще не начиналась.'
-            );
-            return task;
-          }
-          return {
-            ...task,
-            pomidorArray: [...task.pomidorArray.slice(0, -1)],
-          };
-        }
+    setErrorMessage('');
+    if (pomidorArray.length < 2) {
+      setErrorMessage(
+        'Если уменьшить количество "помидоров", их не останется.'
+      );
+      return;
+    }
 
-        return task;
-      })
+    if (pomidorArray.at(-1)?.activeIntervals?.[0].start) {
+      setErrorMessage(
+        'Возможно удаление только тех "помидоров", работа с которыми еще не начиналась.'
+      );
+      return;
+    }
+
+    setTaskList((oldTaskList) =>
+      oldTaskList.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              pomidorArray: [...task.pomidorArray.slice(0, -1)],
+            }
+          : task
+      )
     );
   };
 
@@ -245,7 +248,7 @@ export function TaskItem({ id, title, pomidorArray }: ITask) {
         </ModalWindow>
       )}
 
-      {errorMessage && <ErrorMessage message={errorMessage} />}
+      {/* {errorMessage && <ErrorMessage message={errorMessage} />} */}
     </li>
   );
 }
