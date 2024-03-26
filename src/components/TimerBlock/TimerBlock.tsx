@@ -58,7 +58,11 @@ export function TimerBlock() {
 
       switch (action) {
         case EActions.startTimer: {
-          newProps = { start: Date.now(), isActive: true };
+          newProps = {
+            start: Date.now(),
+            isActive: true,
+          };
+          if (isPomidor) newProps.isCurrent = true;
           break;
         }
         case EActions.pauseTimer: {
@@ -170,7 +174,7 @@ export function TimerBlock() {
 
                 if (
                   addPomidorAction &&
-                  currentPomidor?.pomidorId &&
+                  typeof currentPomidor?.pomidorId === 'number' &&
                   pomidor.pomidorId === currentPomidor.pomidorId + 1
                 ) {
                   return addAction === EActions.addPomidor
@@ -410,7 +414,10 @@ export function TimerBlock() {
                     </button>
                   )}
                   {isTimerActive && (
-                    <button className='primaryBtn' onClick={pauseTimer}>
+                    <button
+                      className={classNames('primaryBtn', styles.pauseBtn)}
+                      onClick={pauseTimer}
+                      disabled={currentTime < 1000}>
                       Пауза
                     </button>
                   )}

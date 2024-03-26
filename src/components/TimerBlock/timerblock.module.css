@@ -66,6 +66,14 @@
     margin-right: 25px;
 }
 
+.pauseBtn:disabled,
+.pauseBtn:disabled:hover,
+.pauseBtn:disabled:active {
+    opacity: 1;
+    background-color: var(--green);
+    cursor: not-allowed;
+}
+
 @media(min-width:768px) {
     .timerBody {
         padding: 50px;
