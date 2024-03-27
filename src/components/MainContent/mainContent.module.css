@@ -37,6 +37,14 @@
     width: 100%;
 }
 
+.errorBlock {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 200px;
+    z-index: 1100;
+}
+
 @media(min-width:768px) {
     .mainContent {
         flex-direction: row;
@@ -47,10 +55,20 @@
         max-width: 50%;
         margin-right: 25px;
     }
+
+    .errorBlock {
+        right: 20px;
+        bottom: 20px;
+        width: 300px;
+    }
 }
 
 @media(min-width:1440px) {
     .descrBlock {
         max-width: min(30%, 500px);
+    }
+
+    .errorBlock {
+        width: 500px;
     }
 }

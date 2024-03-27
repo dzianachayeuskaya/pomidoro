@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './timerblock.module.css';
 import {
+  EMessageKind,
   IActiveInterval,
   ITask,
   ITimeInterval,
-  errorMessageState,
+  errorMessagesState,
   taskListState,
   timeIntervalState,
 } from '../../recoil_state';
@@ -13,8 +14,10 @@ import { useParams } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 import { Break } from '../Break';
-import { formatTimeToStringWithColon } from '../../utils/functions';
-// import { ErrorMessage } from '../ErrorMessage';
+import {
+  formatTimeToStringWithColon,
+  returnNewErrorMessages,
+} from '../../utils/functions';
 import { EIcons, Icon } from '../Icon';
 
 enum EActions {
@@ -43,8 +46,10 @@ export function TimerBlock() {
   const [isPomidor, setIsPomidor] = useState(true);
   const [isPomidorNew, setIsPomidorNew] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const setErrorMessage = useSetRecoilState(errorMessageState);
-  const [targetTask, setTargetTask] = useState<ITask | null>(null);
+  const setErrorMessages = useSetRecoilState(errorMessagesState);
+  const [targetTask, setTargetTask] = useState<ITask | undefined>(
+    taskList.find((task) => task.id === taskId)
+  );
   const [activePomidorIndex, setActivePomidorIndex] = useState(0);
   const timerIdRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -282,7 +287,14 @@ export function TimerBlock() {
 
   const addPomidor = () => {
     if (!targetTask?.isCompleted) changeList(EActions.addEmptyPomidor);
-    else setErrorMessage('Эта задача уже завершена.');
+    else
+      setErrorMessages((prev) =>
+        returnNewErrorMessages(
+          EMessageKind.pomidorAdding,
+          'Выполнение задачи завершено.',
+          prev
+        )
+      );
   };
 
   useEffect(() => {
@@ -318,7 +330,9 @@ export function TimerBlock() {
           ? !activePomidor.activeIntervals?.[0].start
           : !activePomidor.break.activeIntervals?.[0].start
       );
-      setErrorMessage('');
+      setErrorMessages((prev) =>
+        prev.filter((err) => err.kind !== EMessageKind.taskSearch)
+      );
 
       if (isPaused) {
         const elapsedTime =
@@ -335,7 +349,7 @@ export function TimerBlock() {
         setCurrentTime(isPomidor ? pomidorTime : breakTime);
         console.log('isPomidorNew');
       }
-    } else setErrorMessage(`Задача с id "${taskId}" не существует`);
+    }
   }, [
     taskList,
     taskId,
@@ -345,8 +359,20 @@ export function TimerBlock() {
     isTimerActive,
     isCompleted,
     isPomidorNew,
-    setErrorMessage,
+    setErrorMessages,
+    targetTask,
   ]);
+
+  useEffect(() => {
+    if (!targetTask)
+      setErrorMessages((prev) =>
+        returnNewErrorMessages(
+          EMessageKind.taskSearch,
+          `Задача с id "${taskId}" не существует`,
+          prev
+        )
+      );
+  }, [setErrorMessages, targetTask, taskId]);
 
   useEffect(() => {
     if (currentTime < 0) onNext();
@@ -456,7 +482,6 @@ export function TimerBlock() {
           </div>
         </div>
       )}
-      {/* {errorMessage && <ErrorMessage message={errorMessage} />} */}
     </>
   );
 }

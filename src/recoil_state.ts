@@ -42,6 +42,19 @@ export interface ITimeByDay {
   stops: number;
 }
 
+export enum EMessageKind {
+  taskEdition = 'taskEdition',
+  pomidorDeleting = 'pomidorDeleting',
+  pomidorAdding = 'pomidorAdding',
+  taskSearch = 'taskSearch',
+}
+
+export interface IMessage {
+  kind: EMessageKind;
+  id: string;
+  message: string;
+}
+
 const titleState = atom({
   key: 'titleState',
   default: '',
@@ -250,9 +263,9 @@ const timeIntervalState = atom<IPomidorInterval>({
       },
 });
 
-const errorMessageState = atom({
-  key: 'errorMessageState',
-  default: '',
+const errorMessagesState = atom<IMessage[]>({
+  key: 'errorMessagesState',
+  default: [],
 });
 export {
   titleState,
@@ -260,5 +273,5 @@ export {
   statDataState,
   timeIntervalState,
   taskListFilterState,
-  errorMessageState,
+  errorMessagesState,
 };

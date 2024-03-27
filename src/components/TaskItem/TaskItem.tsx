@@ -7,17 +7,22 @@ import React, {
 } from 'react';
 import styles from './taskItem.module.css';
 
-import { ITask, errorMessageState, taskListState } from '../../recoil_state';
+import {
+  EMessageKind,
+  ITask,
+  errorMessagesState,
+  taskListState,
+} from '../../recoil_state';
 import { Link, useNavigate } from 'react-router-dom';
 import { Dropdown } from '../Dropdown';
 import { EIcons, Icon } from '../Icon';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { Text } from '../Text';
 import { Break } from '../Break';
 import { ModalWindow } from '../ModalWindow';
-// import { ErrorMessage } from '../ErrorMessage';
 import classNames from 'classnames';
 import { MenuItemsList, Option } from '../MenuItemsList';
+import { returnNewErrorMessages } from '../../utils/functions';
 
 export function TaskItem({ id, title, pomidorArray, isCompleted }: ITask) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,31 +32,39 @@ export function TaskItem({ id, title, pomidorArray, isCompleted }: ITask) {
   const [width, setWidth] = useState(title.length * 8);
   const setTaskList = useSetRecoilState(taskListState);
   const navigate = useNavigate();
-  const setErrorMessage = useSetRecoilState(errorMessageState);
+  const [errorMessages, setErrorMessages] = useRecoilState(errorMessagesState);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
-    if (value.trim().length >= 3 && value.trim().length <= 255)
-      setErrorMessage('');
+    if (e.target.value.trim().length > 2 && e.target.value.trim().length <= 255)
+      setErrorMessages((prev) =>
+        prev.filter((err) => err.kind !== EMessageKind.taskEdition)
+      );
   };
 
   const onSave = () => {
     if (value.trim().length < 3 || value.trim().length > 255) {
-      setErrorMessage('Введите корректное название задачи');
+      if (!errorMessages.find((err) => err.kind === EMessageKind.taskEdition))
+        setErrorMessages((prev) =>
+          returnNewErrorMessages(
+            EMessageKind.taskEdition,
+            'Введите корректное название задачи',
+            prev
+          )
+        );
       setIsEditing(true);
       inputRef.current?.focus();
       return;
     }
 
     setTaskList((oldTaskList) =>
-      oldTaskList.map((item) => {
-        if (item.id === id) {
-          return { ...item, title: value.trim() };
-        }
-        return item;
-      })
+      oldTaskList.map((item) =>
+        item.id === id ? { ...item, title: value.trim() } : item
+      )
     );
-    setErrorMessage('');
+    setErrorMessages((prev) =>
+      prev.filter((err) => err.kind !== EMessageKind.taskEdition)
+    );
     setIsEditing(false);
     setValue(value.trim());
   };
@@ -74,11 +87,19 @@ export function TaskItem({ id, title, pomidorArray, isCompleted }: ITask) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleIncreaseClick = () => {
+    setErrorMessages((prev) =>
+      prev.filter((err) => err.kind !== EMessageKind.pomidorAdding)
+    );
     if (isCompleted) {
-      setErrorMessage('Выполнение задачи завершено.');
+      setErrorMessages((prev) =>
+        returnNewErrorMessages(
+          EMessageKind.pomidorAdding,
+          'Выполнение задачи завершено.',
+          prev
+        )
+      );
       return;
     }
-    setErrorMessage('');
 
     setTaskList((oldTaskList) =>
       oldTaskList.map((task) =>
@@ -101,20 +122,26 @@ export function TaskItem({ id, title, pomidorArray, isCompleted }: ITask) {
   };
 
   const handleDecreaseClick = () => {
-    setErrorMessage('');
-    if (pomidorArray.length < 2) {
-      setErrorMessage(
-        'Если уменьшить количество "помидоров", их не останется.'
+    if (
+      pomidorArray.length < 2 ||
+      pomidorArray.at(-1)?.activeIntervals?.[0].start
+    ) {
+      setErrorMessages((prev) =>
+        returnNewErrorMessages(
+          EMessageKind.pomidorDeleting,
+          pomidorArray.length < 2
+            ? 'Если уменьшить количество "помидоров", их не останется.'
+            : 'Возможно удаление только тех "помидоров", работа с которыми еще не начиналась.',
+          prev,
+          true
+        )
       );
       return;
     }
 
-    if (pomidorArray.at(-1)?.activeIntervals?.[0].start) {
-      setErrorMessage(
-        'Возможно удаление только тех "помидоров", работа с которыми еще не начиналась.'
-      );
-      return;
-    }
+    setErrorMessages((prev) =>
+      prev.filter((err) => err.kind !== EMessageKind.pomidorDeleting)
+    );
 
     setTaskList((oldTaskList) =>
       oldTaskList.map((task) =>
@@ -138,10 +165,9 @@ export function TaskItem({ id, title, pomidorArray, isCompleted }: ITask) {
 
   const onDelete = () => {
     setTaskList((oldList) =>
-      oldList.map((item) => {
-        if (item.id === id) return { ...item, isDeleted: true };
-        return item;
-      })
+      oldList.map((item) =>
+        item.id === id ? { ...item, isDeleted: true } : item
+      )
     );
     navigate('/');
   };
@@ -149,17 +175,6 @@ export function TaskItem({ id, title, pomidorArray, isCompleted }: ITask) {
   const onCancel = () => {
     setIsModalOpen(false);
   };
-
-  // useEffect(() => {
-  //   // clearInterval(timeoutIdRef);
-  //   // if (errorMessage) {
-  //   //    timeoutIdRef = setTimeout(() =>
-  //   //   setErrorMessage(''),3000)
-  //   // }
-  //   // return () => {
-  //   //    timeoutIdRef && clearInterval(timeoutIdRef);
-  //   // }
-  // }, [errorMessage]);
 
   const options: Option[] = [
     {
@@ -247,8 +262,6 @@ export function TaskItem({ id, title, pomidorArray, isCompleted }: ITask) {
           </button>
         </ModalWindow>
       )}
-
-      {/* {errorMessage && <ErrorMessage message={errorMessage} />} */}
     </li>
   );
 }

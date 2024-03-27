@@ -3,7 +3,7 @@ import styles from './mainContent.module.css';
 import { UlList } from '../UlList';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
-  errorMessageState,
+  errorMessagesState,
   taskListState,
   titleState,
 } from '../../recoil_state';
@@ -12,10 +12,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { getRandomAlphanumericString } from '../../utils/functions';
 import { TaskItem } from '../TaskItem';
 import { EColor, Text } from '../Text';
-// import { ErrorMessage } from '../ErrorMessage';
-
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ErrorMessage } from '../ErrorMessage';
 
 const list = [
   'Выберите категорию и напишите название текущей задачи',
@@ -32,7 +29,7 @@ export function MainContent() {
 
   const [isTouched, setIsTouched] = useState(false);
   const [validationError, setValidationError] = useState('');
-  const errorMessage = useRecoilValue(errorMessageState);
+  const errorMessages = useRecoilValue(errorMessagesState);
 
   useEffect(() => {
     localStorage.setItem('taskList', JSON.stringify(taskList));
@@ -91,10 +88,6 @@ export function MainContent() {
     }
   };
 
-  useEffect(() => {
-    if (errorMessage) toast(errorMessage);
-  }, [errorMessage]);
-
   return (
     <div className={styles.mainContent}>
       <div className={styles.descrBlock}>
@@ -137,13 +130,15 @@ export function MainContent() {
           )}
         </div>
       </div>
-      {/* {errorMessage && <ErrorMessage message={errorMessage} />} */}
-      <ToastContainer
-        position='bottom-right'
-        autoClose={3000}
-        hideProgressBar={true}
-        pauseOnHover={false}
-      />
+
+      {!!errorMessages.length && (
+        <div className={styles.errorBlock}>
+          {errorMessages.map((err) => (
+            <ErrorMessage key={err.id} {...err} />
+          ))}
+        </div>
+      )}
+
       <Outlet />
     </div>
   );

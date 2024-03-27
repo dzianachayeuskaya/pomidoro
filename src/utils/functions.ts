@@ -1,3 +1,5 @@
+import { EMessageKind, IMessage } from '../recoil_state';
+
 export function determineRect(containerRef: React.RefObject<HTMLDivElement>) {
   if (containerRef.current) {
     const rect = containerRef.current.getBoundingClientRect();
@@ -57,4 +59,22 @@ export function getRandomAlphanumericString(length: number) {
     result += characters.charAt(randomIndex);
   }
   return result;
+}
+
+export function returnNewErrorMessages(
+  kind: EMessageKind,
+  message: string,
+  prevMessages: IMessage[],
+  isFilterNeeded?: boolean
+) {
+  return [
+    ...(isFilterNeeded
+      ? prevMessages.filter((err) => err.message !== message)
+      : prevMessages),
+    {
+      kind,
+      id: getRandomAlphanumericString(4),
+      message,
+    },
+  ];
 }
