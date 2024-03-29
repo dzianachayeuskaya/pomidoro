@@ -1,4 +1,10 @@
-import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  KeyboardEvent,
+  createRef,
+  useEffect,
+  useState,
+} from 'react';
 import styles from './mainContent.module.css';
 import { UlList } from '../UlList';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -13,6 +19,8 @@ import { getRandomAlphanumericString } from '../../utils/functions';
 import { TaskItem } from '../TaskItem';
 import { EColor, Text } from '../Text';
 import { ErrorMessage } from '../ErrorMessage';
+import { ModalWindow } from '../ModalWindow';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 const list = [
   'Выберите категорию и напишите название текущей задачи',
@@ -29,6 +37,9 @@ export function MainContent() {
 
   const [isTouched, setIsTouched] = useState(false);
   const [validationError, setValidationError] = useState('');
+
+  const [activeTaskId, setActiveTaskId] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const errorMessages = useRecoilValue(errorMessagesState);
 
   useEffect(() => {
@@ -67,6 +78,8 @@ export function MainContent() {
         ],
         isCompleted: false,
         isDeleted: false,
+        taskRef: createRef<HTMLLIElement>(),
+        timerBlockRef: createRef<HTMLDivElement>(),
       },
       ...oldTaskList,
     ]);
@@ -86,6 +99,28 @@ export function MainContent() {
       setIsTouched(false);
       setValidationError('');
     }
+  };
+
+  const handleDeleteClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const onDelete = () => {
+    setTaskList((oldList) =>
+      oldList.map((item) =>
+        item.id === activeTaskId ? { ...item, isDeleted: true } : item
+      )
+    );
+    setIsModalOpen(false);
+    navigate('/');
+  };
+
+  const onCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const onTaskClick = (id: string) => {
+    setActiveTaskId(id);
   };
 
   return (
@@ -110,7 +145,6 @@ export function MainContent() {
               {validationError}
             </Text>
           )}
-
           <Break size={25} top />
           <button
             className='primaryBtn'
@@ -118,27 +152,67 @@ export function MainContent() {
             disabled={!!validationError && isTouched}>
             Добавить
           </button>
-
           <Break size={25} top />
-          {!!taskList.length && (
-            <ul className={styles.taskList}>
-              {taskList.map((item) =>
-                item.isDeleted ? null : <TaskItem key={item.id} {...item} />
-              )}
-              <div className={styles.divider}> </div>
-            </ul>
-          )}
+          <div className={styles.divider}></div>
+          <TransitionGroup className={styles.taskList}>
+            {taskList.map((item) => {
+              const taskRef = item.taskRef;
+              const refObject = {
+                current:
+                  taskRef instanceof Object && 'current' in taskRef
+                    ? taskRef.current
+                    : null,
+              };
+
+              return item.isDeleted ? null : (
+                <CSSTransition
+                  key={item.id}
+                  nodeRef={refObject}
+                  timeout={300}
+                  classNames='drop'>
+                  <TaskItem
+                    key={item.id}
+                    {...item}
+                    ref={refObject}
+                    onTaskClick={onTaskClick}
+                    handleDeleteClick={handleDeleteClick}
+                  />
+                </CSSTransition>
+              );
+            })}
+          </TransitionGroup>
+          <div className={styles.divider}></div>
         </div>
       </div>
-
-      {!!errorMessages.length && (
-        <div className={styles.errorBlock}>
-          {errorMessages.map((err) => (
-            <ErrorMessage key={err.id} {...err} />
-          ))}
-        </div>
-      )}
-
+      <ModalWindow onClose={onCancel} isOpen={isModalOpen}>
+        <Text size={24}>Удалить задачу?</Text>
+        <Break size={25} top />
+        <button className='secondaryBtn active' onClick={onDelete}>
+          Удалить
+        </button>
+        <button className={styles.cancelBtn} onClick={onCancel}>
+          Отмена
+        </button>
+      </ModalWindow>
+      <TransitionGroup className={styles.errorBlock}>
+        {errorMessages.map(({ nodeRef, id, ...err }) => {
+          const refObject = {
+            current:
+              nodeRef instanceof Object && 'current' in nodeRef
+                ? nodeRef.current
+                : null,
+          };
+          return (
+            <CSSTransition
+              key={id}
+              nodeRef={refObject}
+              timeout={300}
+              classNames='drop'>
+              <ErrorMessage key={id} id={id} {...err} ref={refObject} />
+            </CSSTransition>
+          );
+        })}
+      </TransitionGroup>
       <Outlet />
     </div>
   );

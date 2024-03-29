@@ -1,6 +1,7 @@
+import { RefObject, createRef } from 'react';
 import { EMessageKind, IMessage } from '../recoil_state';
 
-export function determineRect(containerRef: React.RefObject<HTMLDivElement>) {
+export function determineRect(containerRef: RefObject<HTMLDivElement>) {
   if (containerRef.current) {
     const rect = containerRef.current.getBoundingClientRect();
     const scrollTop = document.documentElement.scrollTop;
@@ -64,17 +65,15 @@ export function getRandomAlphanumericString(length: number) {
 export function returnNewErrorMessages(
   kind: EMessageKind,
   message: string,
-  prevMessages: IMessage[],
-  isFilterNeeded?: boolean
-) {
+  prevMessages: IMessage[]
+): IMessage[] {
   return [
-    ...(isFilterNeeded
-      ? prevMessages.filter((err) => err.message !== message)
-      : prevMessages),
+    ...prevMessages,
     {
       kind,
       id: getRandomAlphanumericString(4),
       message,
+      nodeRef: createRef<HTMLDivElement>(),
     },
   ];
 }

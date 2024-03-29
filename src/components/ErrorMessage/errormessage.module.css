@@ -1,6 +1,6 @@
 .errorContainer {
     position: relative;
-    padding: 20px;
+    padding: 10px;
     border: 1px solid var(--red);
     color: var(--red);
     background-color: rgba(220,
@@ -17,6 +17,7 @@
     position: absolute;
     top: 0;
     right: 5px;
+    width: 17px;
     background-color: transparent;
 }
 
@@ -29,28 +30,14 @@
     transition: fill 0.2s ease;
 }
 
-.fade-enter {
-    opacity: 0;
-    transform: scale(0.9);
-}
-
-.fade-enter-active {
-    opacity: 1;
-    transform: translateX(0);
-    transition: opacity 300ms, transform 300ms;
-}
-
-.fade-exit {
-    opacity: 1;
-}
-
-.fade-exit-active {
-    opacity: 0;
-    transform: scale(0.9);
-    transition: opacity 300ms, transform 300ms;
-}
-
 @media(min-width: 768px) {
+    .errorContainer {
+        padding: 20px;
+    }
+
+    .closeBtn {
+        width: 24px;
+    }
 
     .closeBtn:hover,
     .closeBtn:active {
@@ -60,11 +47,5 @@
     .closeBtn:hover path,
     .closeBtn:active path {
         fill: var(--dark-red)
-    }
-}
-
-@media(min-width: 1440px) {
-    .errorContainer {
-        padding: 30px;
     }
 }

@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import styles from './filterList.module.css';
 import { EFilter, taskListFilterState } from '../../recoil_state';
 import { useRecoilState } from 'recoil';
+import { CSSTransition } from 'react-transition-group';
 
 interface IFilterList {
   options: EFilter[];
@@ -21,6 +22,7 @@ export function FilterList({ options }: IFilterList) {
   const [taskListFilter, setTaskListFilter] =
     useRecoilState(taskListFilterState);
   const divRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
   const onSelect = (
     e: MouseEvent<HTMLLIElement> | KeyboardEvent<HTMLLIElement>
@@ -98,22 +100,29 @@ export function FilterList({ options }: IFilterList) {
           onKeyUp={onSelectTitleKeyUp}>
           {taskListFilter}
         </div>
-        <ul className={styles.selectContent}>
-          {options.map((item, i) => (
-            <li
-              className={classNames(styles.selectItem, {
-                [styles.isActive]: taskListFilter === item,
-                // [styles.isSelected]: selectedIndex === i,
-              })}
-              key={item}
-              onClick={onSelect}
-              onKeyUp={onSelectKeyUp}
-              data-value={item}
-              tabIndex={0}>
-              {item}
-            </li>
-          ))}
-        </ul>
+        <CSSTransition
+          in={isFilterOpen}
+          nodeRef={listRef}
+          timeout={300}
+          classNames='drop'
+          unmountOnExit>
+          <ul className={styles.selectContent} ref={listRef}>
+            {options.map((item, i) => (
+              <li
+                className={classNames(styles.selectItem, {
+                  [styles.isActive]: taskListFilter === item,
+                  // [styles.isSelected]: selectedIndex === i,
+                })}
+                key={item}
+                onClick={onSelect}
+                onKeyUp={onSelectKeyUp}
+                data-value={item}
+                tabIndex={0}>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </CSSTransition>
       </div>
     </form>
   );

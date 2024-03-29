@@ -37,11 +37,21 @@
     width: 100%;
 }
 
+.cancelBtn {
+    margin-top: 10px;
+    border-bottom: 1px solid var(--black);
+    color: var(--black);
+    font-weight: 300;
+    background-color: transparent;
+    transition: border .3s ease, color .3s ease;
+}
+
 .errorBlock {
     position: fixed;
     bottom: 10px;
     right: 10px;
-    width: 200px;
+    width: max(150px, 40%);
+    font-size: 12px;
     z-index: 1100;
 }
 
@@ -56,10 +66,17 @@
         margin-right: 25px;
     }
 
+    .cancelBtn:hover,
+    .cancelBtn:active {
+        border-bottom: 1px solid var(--dark-green);
+        color: var(--dark-green);
+    }
+
     .errorBlock {
         right: 20px;
         bottom: 20px;
-        width: 300px;
+        width: max(320px, 20%);
+        font-size: 16px;
     }
 }
 
@@ -69,6 +86,6 @@
     }
 
     .errorBlock {
-        width: 500px;
+        width: max(450px, 20%);
     }
 }

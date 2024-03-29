@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styles from './timerblock.module.css';
 import {
   EMessageKind,
@@ -19,6 +25,7 @@ import {
   returnNewErrorMessages,
 } from '../../utils/functions';
 import { EIcons, Icon } from '../Icon';
+import { SwitchTransition, CSSTransition } from 'react-transition-group';
 
 enum EActions {
   startTimer = 'startTimer',
@@ -52,6 +59,8 @@ export function TimerBlock() {
   );
   const [activePomidorIndex, setActivePomidorIndex] = useState(0);
   const timerIdRef = useRef<NodeJS.Timeout | null>(null);
+  const [nodeRef, setNodeRef] =
+    useState<MutableRefObject<HTMLDivElement | null> | null>(null);
 
   const [currentTime, setCurrentTime] = useState(
     isPomidor ? pomidorTime : breakTime
@@ -288,12 +297,16 @@ export function TimerBlock() {
   const addPomidor = () => {
     if (!targetTask?.isCompleted) changeList(EActions.addEmptyPomidor);
     else
-      setErrorMessages((prev) =>
-        returnNewErrorMessages(
-          EMessageKind.pomidorAdding,
-          'Выполнение задачи завершено.',
-          prev
-        )
+      setTimeout(
+        () =>
+          setErrorMessages((prev) =>
+            returnNewErrorMessages(
+              EMessageKind.pomidorAdding,
+              'Выполнение задачи завершено.',
+              prev
+            )
+          ),
+        300
       );
   };
 
@@ -301,19 +314,27 @@ export function TimerBlock() {
     const targetTask = taskList.find((task) => task.id === taskId);
 
     if (targetTask) {
-      setIsCompleted(targetTask.isCompleted);
+      const { timerBlockRef, isCompleted, pomidorArray } = targetTask;
+      setNodeRef({
+        current:
+          timerBlockRef instanceof Object && 'current' in timerBlockRef
+            ? timerBlockRef.current
+            : null,
+      });
+
+      setIsCompleted(isCompleted);
       setTargetTask(targetTask);
 
-      const currentPomidorIndex = targetTask.pomidorArray.findIndex(
+      const currentPomidorIndex = pomidorArray.findIndex(
         (pomidor) => pomidor.isCurrent
       );
       const activePomidorIndex =
         currentPomidorIndex > -1
           ? currentPomidorIndex
-          : targetTask.pomidorArray.length - 1;
+          : pomidorArray.length - 1;
       setActivePomidorIndex(activePomidorIndex);
 
-      const activePomidor = targetTask.pomidorArray[activePomidorIndex];
+      const activePomidor = pomidorArray[activePomidorIndex];
       const isPomidor = !activePomidor.finish;
       setIsTimerActive(
         isPomidor ? activePomidor.isActive : activePomidor.break.isActive
@@ -365,12 +386,16 @@ export function TimerBlock() {
 
   useEffect(() => {
     if (!targetTask)
-      setErrorMessages((prev) =>
-        returnNewErrorMessages(
-          EMessageKind.taskSearch,
-          `Задача с id "${taskId}" не существует`,
-          prev
-        )
+      setTimeout(
+        () =>
+          setErrorMessages((prev) =>
+            returnNewErrorMessages(
+              EMessageKind.taskSearch,
+              `Задача с id "${taskId}" не существует`,
+              prev
+            )
+          ),
+        300
       );
   }, [setErrorMessages, targetTask, taskId]);
 
@@ -390,97 +415,107 @@ export function TimerBlock() {
   return (
     <>
       {targetTask && (
-        <div className={styles.timerContainer}>
-          <div
-            className={classNames(styles.timerHeader, {
-              [styles.work]:
-                !isCompleted &&
-                isPomidor &&
-                (isTimerActive || isPause) &&
-                !isPomidorNew,
-              [styles.break]:
-                !isCompleted && !isPomidor && (isTimerActive || isPause),
-            })}>
-            <Text size={16} weight={700} color={EColor.white}>
-              {targetTask.title}
-            </Text>
-            <Text size={16} color={EColor.white}>
-              {isPomidor ? 'Помидор ' : 'Перерыв '}
-              {activePomidorIndex + 1}
-            </Text>
-          </div>
-          <div className={styles.timerBody}>
-            {isCompleted && (
-              <Text size={16} weight={700}>
-                Ура! Задача выполнена.
-              </Text>
-            )}
-            {!isCompleted && (
-              <>
-                <div className={styles.timeContainer}>
-                  <span
-                    className={classNames(styles.timeSpan, [
-                      {
-                        [styles.work]: isPomidor && isTimerActive,
-                        [styles.break]: !isPomidor && isTimerActive,
-                      },
-                    ])}>
-                    {formatTimeToStringWithColon(currentTime)}
-                  </span>
-                </div>
-                <button
-                  className={styles.addBtn}
-                  onClick={addPomidor}
-                  aria-label='Добавить новый помидор'>
-                  <Icon name={EIcons.add} />
-                </button>
-                <Break size={25} top />
-                <div className={styles.actions}>
-                  {!isTimerActive && !isPause && isPomidor && (
-                    <button className='primaryBtn' onClick={startTimer}>
-                      Старт
-                    </button>
-                  )}
-                  {isTimerActive && (
+        <SwitchTransition>
+          <CSSTransition
+            key={targetTask.id}
+            nodeRef={nodeRef}
+            timeout={300}
+            classNames='page'
+            unmountOnExit>
+            <div className={styles.timerContainer} ref={nodeRef}>
+              <div
+                className={classNames(styles.timerHeader, {
+                  [styles.work]:
+                    !isCompleted &&
+                    isPomidor &&
+                    (isTimerActive || isPause) &&
+                    !isPomidorNew,
+                  [styles.break]:
+                    !isCompleted && !isPomidor && (isTimerActive || isPause),
+                })}>
+                <Text size={16} weight={700} color={EColor.white}>
+                  {targetTask.title}
+                </Text>
+                <Text size={16} color={EColor.white}>
+                  {isPomidor ? 'Помидор ' : 'Перерыв '}
+                  {activePomidorIndex + 1}
+                </Text>
+              </div>
+              <div className={styles.timerBody}>
+                {isCompleted && (
+                  <Text size={16} weight={700}>
+                    Ура! Задача выполнена.
+                  </Text>
+                )}
+                {!isCompleted && (
+                  <>
+                    <div className={styles.timeContainer}>
+                      <span
+                        className={classNames(styles.timeSpan, [
+                          {
+                            [styles.work]: isPomidor && isTimerActive,
+                            [styles.break]: !isPomidor && isTimerActive,
+                          },
+                        ])}>
+                        {formatTimeToStringWithColon(currentTime)}
+                      </span>
+                    </div>
                     <button
-                      className={classNames('primaryBtn', styles.pauseBtn)}
-                      onClick={pauseTimer}
-                      disabled={currentTime < 1000}>
-                      Пауза
+                      className={styles.addBtn}
+                      onClick={addPomidor}
+                      aria-label='Добавить новый помидор'>
+                      <Icon name={EIcons.add} />
                     </button>
-                  )}
-                  {!isPause && isPomidor && (
-                    <button
-                      className='secondaryBtn'
-                      onClick={onSkip}
-                      disabled={
-                        !isTimerActive && targetTask.pomidorArray.length === 1
-                      }>
-                      Стоп
-                    </button>
-                  )}
-                  {!isTimerActive && isPause && (
-                    <button className='primaryBtn' onClick={startTimer}>
-                      Продолжить
-                    </button>
-                  )}
+                    <Break size={25} top />
+                    <div className={styles.actions}>
+                      {!isTimerActive && !isPause && isPomidor && (
+                        <button className='primaryBtn' onClick={startTimer}>
+                          Старт
+                        </button>
+                      )}
+                      {isTimerActive && (
+                        <button
+                          className={classNames('primaryBtn', styles.pauseBtn)}
+                          onClick={pauseTimer}
+                          disabled={currentTime < 1000}>
+                          Пауза
+                        </button>
+                      )}
+                      {!isPause && isPomidor && (
+                        <button
+                          className='secondaryBtn'
+                          onClick={onSkip}
+                          disabled={
+                            !isTimerActive &&
+                            targetTask.pomidorArray.length === 1
+                          }>
+                          Стоп
+                        </button>
+                      )}
+                      {!isTimerActive && isPause && (
+                        <button className='primaryBtn' onClick={startTimer}>
+                          Продолжить
+                        </button>
+                      )}
 
-                  {!isTimerActive && isPause && isPomidor && (
-                    <button className='secondaryBtn' onClick={onComplete}>
-                      Сделано
-                    </button>
-                  )}
+                      {!isTimerActive && isPause && isPomidor && (
+                        <button className='secondaryBtn' onClick={onComplete}>
+                          Сделано
+                        </button>
+                      )}
 
-                  {!isPomidor && (
-                    <button className='secondaryBtn' onClick={onSkip}>
-                      Пропустить
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+                      {!isPomidor && (
+                        <button className='secondaryBtn' onClick={onSkip}>
+                          Пропустить
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </CSSTransition>
+        </SwitchTransition>
       )}
     </>
   );

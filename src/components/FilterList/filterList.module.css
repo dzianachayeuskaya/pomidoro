@@ -50,15 +50,11 @@
   position: absolute;
   top: 58px;
   right: 0;
-  display: none;
-  z-index: 1000;
-}
-
-.selectWrapper.isOpen .selectContent {
   display: flex;
   flex-direction: column;
   min-width: 100%;
   background-color: var(--grayF4);
+  z-index: 1000;
 }
 
 .selectItem {

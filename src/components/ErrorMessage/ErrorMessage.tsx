@@ -1,40 +1,34 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
+import React, { forwardRef, useEffect } from 'react';
 import styles from './errormessage.module.css';
 import { EIcons, Icon } from '../Icon';
 import { useSetRecoilState } from 'recoil';
 import { errorMessagesState } from '../../recoil_state';
 
-export function ErrorMessage({ message, id }: { message: string; id: string }) {
-  const [mounted, setMounted] = useState(false);
-  const nodeRef = useRef(null);
-  const setErrorMessages = useSetRecoilState(errorMessagesState);
+interface IErrorMessage {
+  message: string;
+  id: string;
+}
 
-  useEffect(() => {
-    setMounted(true);
+export const ErrorMessage = forwardRef<HTMLDivElement, IErrorMessage>(
+  ({ message, id }, ref) => {
+    const setErrorMessages = useSetRecoilState(errorMessagesState);
 
-    const timeoutId = setTimeout(() => {
-      // setMounted(false);
+    useEffect(() => {
+      const timeoutId = setTimeout(() => {
+        setErrorMessages((prev) => prev.filter((err) => err.id !== id));
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }, [id, setErrorMessages]);
+
+    const handleClose = () => {
       setErrorMessages((prev) => prev.filter((err) => err.id !== id));
-    }, 4000);
-
-    return () => {
-      clearTimeout(timeoutId);
     };
-  }, [id, setErrorMessages]);
 
-  const handleClose = () => {
-    setErrorMessages((prev) => prev.filter((err) => err.id !== id));
-  };
-
-  return (
-    <CSSTransition
-      nodeRef={nodeRef}
-      in={mounted}
-      timeout={300}
-      classNames={styles.fade}
-      unmountOnExit>
-      <div ref={nodeRef} className={styles.errorContainer}>
+    return (
+      <div ref={ref} className={styles.errorContainer}>
         <button
           className={styles.closeBtn}
           aria-label='Закрыть окно'
@@ -43,9 +37,6 @@ export function ErrorMessage({ message, id }: { message: string; id: string }) {
         </button>
         {message}
       </div>
-    </CSSTransition>
-    // <CSSTransition in={mounted} timeout={500} classNames='fade' unmountOnExit>
-    //   <div className={styles.errorContainer}>{message}</div>
-    // </CSSTransition>
-  );
-}
+    );
+  }
+);

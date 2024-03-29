@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styles from './text.module.css';
 import classNames from 'classnames';
 
@@ -20,7 +20,7 @@ export enum EColor {
 
 interface ITextProps {
   As?: 'span' | 'h1' | 'h2' | 'h3' | 'h4' | 'p' | 'div';
-  children?: React.ReactNode;
+  children?: ReactNode;
   size: TSizes;
   mobileSize?: TSizes;
   tabletSize?: TSizes;

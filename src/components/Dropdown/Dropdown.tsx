@@ -8,6 +8,7 @@ import React, {
 import styles from './dropdown.module.css';
 import ReactDOM from 'react-dom';
 import { determineRect } from '../../utils/functions';
+import { CSSTransition } from 'react-transition-group';
 
 interface IDropdownProps {
   button: ReactNode;
@@ -33,6 +34,7 @@ export function Dropdown({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const [listStyle, setListStyle] = useState<IListStyleState>({
     top: 0,
@@ -71,12 +73,18 @@ export function Dropdown({
       <div className={styles.btn} ref={buttonRef} onClick={onOpen}>
         {button}
       </div>
-      {isOpen &&
-        portalNode &&
+      {portalNode &&
         ReactDOM.createPortal(
-          <div className={styles.list} style={listStyle}>
-            {children}
-          </div>,
+          <CSSTransition
+            in={isOpen}
+            nodeRef={menuRef}
+            timeout={300}
+            classNames='drop-with-translate'
+            unmountOnExit>
+            <div className={styles.list} style={listStyle} ref={menuRef}>
+              {children}
+            </div>
+          </CSSTransition>,
           portalNode
         )}
     </div>

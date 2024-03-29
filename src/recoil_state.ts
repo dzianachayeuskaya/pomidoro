@@ -1,3 +1,4 @@
+import { MutableRefObject } from 'react';
 import { atom, selector } from 'recoil';
 
 export interface IActiveInterval {
@@ -20,6 +21,8 @@ export interface ITask {
   pomidorArray: ITimeInterval[];
   isCompleted: boolean;
   isDeleted: boolean;
+  taskRef: MutableRefObject<HTMLLIElement | null>;
+  timerBlockRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 export interface IPomidorInterval {
@@ -53,6 +56,7 @@ export interface IMessage {
   kind: EMessageKind;
   id: string;
   message: string;
+  nodeRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 const titleState = atom({
