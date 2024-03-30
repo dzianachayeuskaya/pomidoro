@@ -3,6 +3,7 @@ import React, {
   KeyboardEvent,
   createRef,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import styles from './mainContent.module.css';
@@ -41,6 +42,11 @@ export function MainContent() {
   const [activeTaskId, setActiveTaskId] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const errorMessages = useRecoilValue(errorMessagesState);
+
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ref.current) ref.current.click();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('taskList', JSON.stringify(taskList));
@@ -125,7 +131,7 @@ export function MainContent() {
 
   return (
     <div className={styles.mainContent}>
-      <div className={styles.descrBlock}>
+      <div className={styles.descrBlock} ref={ref}>
         <UlList title='Ура! Теперь можно начать работать:' list={list} />
         <div className={styles.taskListBlock}>
           <Break size={25} top />
