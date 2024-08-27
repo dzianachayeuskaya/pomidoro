@@ -405,7 +405,7 @@ export function TimerBlock() {
       timerIdRef.current = setInterval(() => {
         setCurrentTime((prev) => prev - (prev % 1000 || 1000));
       }, currentTime % 1000 || 1000);
-    console.log('targetTask', targetTask, 'isTimerActive', isTimerActive);
+    // console.log('targetTask', targetTask, 'isTimerActive', isTimerActive);
 
     return () => {
       clearTimerIdRef();
@@ -413,11 +413,15 @@ export function TimerBlock() {
   }, [currentTime, onNext, targetTask, isTimerActive]);
 
   useEffect(() => {
+    window.addEventListener('beforeunload', pauseTimer);
     return () => {
       console.log('useEffect pauseTimer');
-      pauseTimer();
+      if (isTimerActive) {
+        window.removeEventListener('beforeunload', pauseTimer);
+        pauseTimer();
+      }
     };
-  }, [pauseTimer]);
+  }, [isTimerActive, pauseTimer]);
 
   return (
     <>
