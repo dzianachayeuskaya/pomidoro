@@ -15,9 +15,10 @@
 
 .main {
     display: flex;
+    flex-direction: column;
     align-items: center;
     width: 100%;
-    height: 470px;
+    height: 870px;
     margin-bottom: 32px;
 }
 
@@ -27,18 +28,26 @@
     flex: 1 1 130px;
 }
 
-.main>div:not(:last-child),
-.footer>div:not(:last-child) {
-    margin-right: 32px;
+.aside {
+    width: min(450px, 100%);
+    height: 100%;
+}
+
+.header,
+.main,
+.footer {
+    gap: 32px;
 }
 
 .block {
     display: flex;
     min-height: 180px;
+    height: 100%;
     background-color: var(--grayF4);
 }
 
 .activityBlock {
+    box-sizing: border-box;
     flex-direction: column;
     align-items: flex-start;
     padding: 25px;
@@ -83,8 +92,10 @@
 
 .chartWrapper {
     position: relative;
-    flex: 1 1 800px;
+    flex: 1 1 950px;
     height: 100%;
+    width: 100%;
+    max-width: 100%;
     background-color: var(--grayF4);
 }
 
@@ -104,7 +115,7 @@
 }
 
 .background {
-    width: 87%;
+    flex-grow: 1;
 }
 
 .chartContentWrapper {
@@ -114,8 +125,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 56px;
-    width: 76%;
+    padding: 0 32px;
+    gap: 32px;
+    width: calc(100% - 200px);
+    overflow: scroll;
     z-index: 10;
 }
 
@@ -173,7 +186,7 @@
 }
 
 .yAxisItem {
-    padding-top: 72px;
+    padding: 72px 20px 0;
     height: 11px;
     text-align: center;
 }
@@ -188,5 +201,25 @@
 
 .footer {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
+}
+
+
+@media(min-width: 768px) {
+    .main {
+        flex-direction: row;
+        height: 470px;
+    }
+
+    .footer {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .chartContentWrapper {
+        padding: 0 56px;
+        width: calc(100% - 240px);
+    }
 }

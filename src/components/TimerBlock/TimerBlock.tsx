@@ -355,7 +355,7 @@ export function TimerBlock() {
         prev.filter((err) => err.kind !== EMessageKind.taskSearch)
       );
 
-      if (isPaused) {
+      if (!isPomidorNew) {
         const elapsedTime =
           (isPomidor
             ? activePomidor?.activeIntervals
@@ -366,7 +366,7 @@ export function TimerBlock() {
         console.log('elapsed time: ', elapsedTime);
 
         setCurrentTime((isPomidor ? pomidorTime : breakTime) - elapsedTime);
-      } else if (isPomidorNew) {
+      } else {
         setCurrentTime(isPomidor ? pomidorTime : breakTime);
         console.log('isPomidorNew');
       }
@@ -400,7 +400,7 @@ export function TimerBlock() {
   }, [setErrorMessages, targetTask, taskId]);
 
   useEffect(() => {
-    if (currentTime < 0) onNext();
+    if (!(currentTime > 0)) onNext();
     if (!timerIdRef.current && targetTask && isTimerActive)
       timerIdRef.current = setInterval(() => {
         setCurrentTime((prev) => prev - (prev % 1000 || 1000));
@@ -411,6 +411,13 @@ export function TimerBlock() {
       clearTimerIdRef();
     };
   }, [currentTime, onNext, targetTask, isTimerActive]);
+
+  useEffect(() => {
+    return () => {
+      console.log('useEffect pauseTimer');
+      pauseTimer();
+    };
+  }, [pauseTimer]);
 
   return (
     <>
@@ -459,13 +466,13 @@ export function TimerBlock() {
                         ])}>
                         {formatTimeToStringWithColon(currentTime)}
                       </span>
+                      <button
+                        className={styles.addBtn}
+                        onClick={addPomidor}
+                        aria-label='Добавить новый помидор'>
+                        <Icon name={EIcons.add} />
+                      </button>
                     </div>
-                    <button
-                      className={styles.addBtn}
-                      onClick={addPomidor}
-                      aria-label='Добавить новый помидор'>
-                      <Icon name={EIcons.add} />
-                    </button>
                     <Break size={25} top />
                     <div className={styles.actions}>
                       {!isTimerActive && !isPause && isPomidor && (

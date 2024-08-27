@@ -1,30 +1,40 @@
 .mainContent {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     padding: 100px 0;
+    gap: 25px;
 }
 
 .descrBlock {
     display: flex;
     flex-direction: column;
-    max-width: max(300px, 90%);
+    align-items: center;
 }
 
 .taskListBlock {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    max-width: 370px;
+    width: min(450px, 100%);
 }
 
 .input {
     padding: 19px 15px;
-    width: calc(100% - 30px);
     background-color: var(--grayF4);
     border: none;
+    width: 100%;
     font-size: 16px;
     font-weight: 300;
+}
+
+.inputGroup {
+    position: relative;
+    width: 100%;
+}
+
+.inputGroup>.errorMessage {
+    position: absolute;
 }
 
 .divider {
@@ -58,12 +68,13 @@
 @media(min-width:768px) {
     .mainContent {
         flex-direction: row;
+        align-items: start;
         justify-content: space-between;
     }
 
     .descrBlock {
-        max-width: 50%;
-        margin-right: 25px;
+        max-width: calc((100% - 25px) / 2);
+        align-items: flex-start;
     }
 
     .cancelBtn:hover,
@@ -81,8 +92,11 @@
 }
 
 @media(min-width:1440px) {
+    .mainContent{
+        gap: 50px;
+    }
     .descrBlock {
-        max-width: min(30%, 500px);
+        width: calc((100% - 50px) / 2);
     }
 
     .errorBlock {

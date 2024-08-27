@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   min-width: max(calc(100vw / 4), 150px);
+  border: 1px solid var(--grayDE);
 }
 
 .selectTitle {
@@ -49,11 +50,13 @@
 .selectContent {
   position: absolute;
   top: 58px;
-  right: 0;
+  right: -1px;
   display: flex;
   flex-direction: column;
   min-width: 100%;
   background-color: var(--grayF4);
+  border: 1px solid var(--grayDE);
+  border-top: none;
   z-index: 1000;
 }
 

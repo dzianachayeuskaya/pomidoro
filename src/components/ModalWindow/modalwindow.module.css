@@ -45,3 +45,10 @@
         fill: var(--dark-green)
     }
 }
+
+@media(min-width: 1440px) {
+    .modalWrap {
+        width: 400px;
+        padding: 50px;
+    }
+}

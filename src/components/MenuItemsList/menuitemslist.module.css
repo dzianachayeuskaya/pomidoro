@@ -8,7 +8,7 @@
   content: '';
   position: absolute;
   top: -1px;
-  right: 50%;
+  right: 10%;
   border: solid var(--grayC4);
   border-width: 1px 0 0 1px;
   display: inline-block;
@@ -37,6 +37,9 @@
 
 
 @media(min-width: 768px) {
+  .menuItemsList::before {
+    right: 46%;
+  }
 
   .menuItem:hover,
   .menuItem:active {

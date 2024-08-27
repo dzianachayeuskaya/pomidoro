@@ -73,8 +73,12 @@ input {
   line-height: 19px;
 }
 
+input {
+  box-sizing: border-box;
+}
+
 button {
-  background-color: none;
+  background-color: transparent;
   padding: 0;
   border: none;
   cursor: pointer;
@@ -154,7 +158,7 @@ button:disabled {
 
 .drop-with-translate-enter {
   opacity: 0;
-  transform: scale(0.9) translateY(-10px) translateX(65px);
+  transform: scale(0.9) translateY(-10px) translateX(5vw);
 }
 
 .drop-with-translate-enter-active {
@@ -169,7 +173,7 @@ button:disabled {
 
 .drop-with-translate-exit-active {
   opacity: 0;
-  transform: scale(0.9) translateY(-10px) translateX(65px);
+  transform: scale(0.9) translateY(-10px) translateX(5vw);
   transition: opacity 300ms, transform 300ms;
 }
 

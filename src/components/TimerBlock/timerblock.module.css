@@ -1,7 +1,7 @@
 .timerContainer {
     display: flex;
     flex-direction: column;
-    min-width: 50%;
+    width: min(450px, 100%);
 }
 
 .timerHeader {
@@ -20,7 +20,6 @@
     background-color: var(--green);
 }
 
-
 .timerBody {
     position: relative;
     display: flex;
@@ -32,9 +31,12 @@
 
 .timeContainer {
     position: relative;
+    width: 140px;
 }
 
 .timeSpan {
+    display: flex;
+    justify-content: center;
     font-size: 50px;
     font-weight: 100;
 }
@@ -49,9 +51,15 @@
 
 .addBtn {
     position: absolute;
-    top: 30%;
-    right: 10%;
+    top: 50%;
+    right: -50px;
     border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.addBtn svg {
+    width: 35px;
+    height: 35px;
 }
 
 .addBtn circle {
@@ -60,10 +68,10 @@
 
 .actions {
     display: flex;
-}
-
-.actions button:first-child {
-    margin-right: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    row-gap: 16px;
 }
 
 .pauseBtn:disabled,
@@ -75,17 +83,25 @@
 }
 
 @media(min-width:768px) {
+    .timerContainer {
+        width: calc((100% - 25px) / 2);
+    }
+
     .timerBody {
         padding: 50px;
     }
 
-    .timeSpan {
-        font-size: 100px;
+    .timeContainer {
+        width: 214px;
     }
 
-    .addBtn {
-        top: 30%;
-        right: 10%;
+    .timeSpan {
+        font-size: 80px;
+    }
+
+    .addBtn svg {
+        width: 50px;
+        height: 50px;
     }
 
     .addBtn:hover circle,
@@ -95,16 +111,19 @@
 }
 
 @media(min-width:1440px) {
+    .timerContainer {
+        width: calc((100% - 50px) / 2);
+    }
+
     .timerBody {
         padding: 100px;
     }
 
-    .timeSpan {
-        font-size: 150px;
+    .timeContainer {
+        width: 414px;
     }
 
-    .addBtn {
-        top: 30%;
-        right: 10%;
+    .timeSpan {
+        font-size: 150px;
     }
 }

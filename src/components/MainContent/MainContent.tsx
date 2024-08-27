@@ -135,22 +135,26 @@ export function MainContent() {
         <UlList title='Ура! Теперь можно начать работать:' list={list} />
         <div className={styles.taskListBlock}>
           <Break size={25} top />
-          <input
-            type='text'
-            name='title'
-            className={styles.input}
-            placeholder='Название задачи'
-            value={taskTitle}
-            onChange={handleChange}
-            onKeyUp={handleKeyUp}
-            onBlur={handleBlur}
-            aria-invalid={validationError ? 'true' : undefined}
-          />
-          {validationError && (
-            <Text size={12} color={EColor.grayC4}>
-              {validationError}
-            </Text>
-          )}
+          <div className={styles.inputGroup}>
+            <input
+              type='text'
+              name='title'
+              className={styles.input}
+              placeholder='Название задачи'
+              value={taskTitle}
+              onChange={handleChange}
+              onKeyUp={handleKeyUp}
+              onBlur={handleBlur}
+              aria-invalid={validationError ? 'true' : undefined}
+            />
+            {validationError && (
+              <div className={styles.errorMessage}>
+                <Text size={12} color={EColor.grayC4}>
+                  {validationError}
+                </Text>
+              </div>
+            )}
+          </div>
           <Break size={25} top />
           <button
             className='primaryBtn'
