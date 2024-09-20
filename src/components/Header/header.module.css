@@ -5,6 +5,12 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
+.nav {
+    display: flex;
+    gap: 24px;
+    flex-wrap: nowrap;
+}
+
 .linkContainer {
     display: flex;
     align-items: center;
@@ -34,16 +40,16 @@
 
     .linkContainer:hover span,
     .linkContainer:active span {
-        color: var(--dark-red)
+        color: var(--dark-red);
     }
 
-    .linkContainer g>path:first-child {
+    .linkContainer path {
         transition: fill 0.3s ease;
     }
 
-    .linkContainer:hover g>path:first-child,
-    .linkContainer:active g>path:first-child {
-        fill: var(--dark-red)
+    .linkContainer:hover path,
+    .linkContainer:active path {
+        fill: var(--dark-red);
     }
 
 }
@@ -51,5 +57,9 @@
 @media(min-width: 1440px) {
     .header {
         padding: 15px calc((100vw - max(75%, var(--l-max-width))) / 2);
+    }
+
+    .nav {
+        gap: 32px;
     }
 }

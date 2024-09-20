@@ -88,6 +88,12 @@
   font-weight: 700;
 }
 
+@media all and (min-width: 320px) and (max-width: 767px) {
+  .d-none {
+    display: none;
+  }
+}
+
 @media all and (min-width: 320px) and (max-width: 1023px) {
   .m24 {
     font-size: 24px;

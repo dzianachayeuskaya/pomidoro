@@ -24,11 +24,11 @@ import { ModalWindow } from '../ModalWindow';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 const list = [
-  'Выберите категорию и напишите название текущей задачи',
+  'Создайте или выберите задачу, над которой хотите работать',
   'Запустите таймер («помидор»)',
   'Работайте пока «помидор» не прозвонит',
   'Сделайте короткий перерыв (3-5 минут)',
-  'Продолжайте работать «помидор» за «помидором», пока задача не будет выполнена. Каждые 4 «помидора» делайте длинный перерыв (15-30 минут).',
+  'Продолжайте работать «помидор» за «помидором», пока задача не будет выполнена. Каждые 4 «помидора» делайте длинный перерыв (15-30 минут).'
 ];
 
 export function MainContent() {
@@ -132,7 +132,7 @@ export function MainContent() {
   return (
     <div className={styles.mainContent}>
       <div className={styles.descrBlock} ref={ref}>
-        <UlList title='Ура! Теперь можно начать работать:' list={list} />
+        <UlList title='Теперь можно начать работать:' list={list} />
         <div className={styles.taskListBlock}>
           <Break size={25} top />
           <div className={styles.inputGroup}>

@@ -144,18 +144,26 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
       setErrorMessages((prev) =>
         prev.filter((err) => err.kind !== EMessageKind.pomidorDeleting)
       );
-      if (
-        pomidorArray.length < 2 ||
-        pomidorArray.at(-1)?.activeIntervals?.[0].start
-      ) {
+
+      let errorMessage = '';
+      if (isCompleted) {
+        errorMessage =
+          'Выполнение задачи завершено.';
+      } else if (pomidorArray.length < 2) {
+        errorMessage =
+          'Если уменьшить количество "помидоров", их не останется.';
+      } else if (pomidorArray.at(-1)?.activeIntervals?.[0].start) {
+        errorMessage =
+          'Возможно удаление только тех "помидоров", работа с которыми еще не начиналась.';
+      }
+
+      if (errorMessage) {
         setTimeout(
           () =>
             setErrorMessages((prev) =>
               returnNewErrorMessages(
                 EMessageKind.pomidorDeleting,
-                pomidorArray.length < 2
-                  ? 'Если уменьшить количество "помидоров", их не останется.'
-                  : 'Возможно удаление только тех "помидоров", работа с которыми еще не начиналась.',
+                errorMessage,
                 prev
               )
             ),
@@ -225,7 +233,7 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
           <span className={styles.taskNumber}>{pomidorArray.length}</span>
           <div
             className={styles.taskValueWrapper}
-            style={{ width: `${width + 8}px` }}>
+            style={{ width: `${width + 18}px` }}>
             <input
               className={styles.taskValueInput}
               ref={inputRef}

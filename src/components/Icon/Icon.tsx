@@ -5,6 +5,8 @@ import classNames from 'classnames';
 export enum EIcons {
   logo = 'logo',
   stat = 'stat',
+  info = 'info',
+  settings = 'settings',
   drop = 'drop',
   focus = 'focus',
   pause = 'pause',
@@ -78,6 +80,33 @@ export function Icon(props: IIconsProps) {
                 <rect width='24' height='24' fill='white' />
               </clipPath>
             </defs>
+          </svg>
+        );
+      case 'info':
+        return (
+          <svg
+            className={classNames({ [styles[`svg${size}`]]: size })}
+            width='16'
+            height='16'
+            fill='currentColor'
+            viewBox='0 0 16 16'
+            xmlns='http://www.w3.org/2000/svg'>
+            <path d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z' />
+          </svg>
+        );
+      case 'settings':
+        return (
+          <svg
+            className={classNames({ [styles[`svg${size}`]]: size })}
+            width='16'
+            height='16'
+            fill='currentColor'
+            viewBox='0 0 16 16'
+            xmlns='http://www.w3.org/2000/svg'>
+            <path
+              fillRule='evenodd'
+              d='M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3h9.05zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8h2.05zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1h9.05z'
+            />
           </svg>
         );
       case 'drop':

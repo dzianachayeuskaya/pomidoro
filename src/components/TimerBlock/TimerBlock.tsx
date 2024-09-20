@@ -360,9 +360,11 @@ export function TimerBlock() {
           (isPomidor
             ? activePomidor?.activeIntervals
             : activePomidor?.break.activeIntervals
-          )?.reduce((acc, curr) => {
-            return curr.pause ? acc + (curr.pause - curr.start) : acc;
-          }, 0) || 0;
+          )?.reduce(
+            (acc, curr) =>
+              acc + ((curr.pause ?? Date.now()) - curr.start),
+            0
+          ) || 0;
         console.log('elapsed time: ', elapsedTime);
 
         setCurrentTime((isPomidor ? pomidorTime : breakTime) - elapsedTime);
@@ -484,6 +486,7 @@ export function TimerBlock() {
                           Старт
                         </button>
                       )}
+
                       {isTimerActive && (
                         <button
                           className={classNames('primaryBtn', styles.pauseBtn)}
@@ -492,32 +495,28 @@ export function TimerBlock() {
                           Пауза
                         </button>
                       )}
-                      {!isPause && isPomidor && (
-                        <button
-                          className='secondaryBtn'
-                          onClick={onSkip}
-                          disabled={
-                            !isTimerActive &&
-                            targetTask.pomidorArray.length === 1
-                          }>
-                          Стоп
-                        </button>
-                      )}
+
                       {!isTimerActive && isPause && (
                         <button className='primaryBtn' onClick={startTimer}>
                           Продолжить
                         </button>
                       )}
 
-                      {!isTimerActive && isPause && isPomidor && (
-                        <button className='secondaryBtn' onClick={onComplete}>
-                          Сделано
+                      {((!isPause && isPomidor) || !isPomidor) && (
+                        <button
+                          className='secondaryBtn'
+                          onClick={onSkip}
+                          disabled={
+                            !isTimerActive &&
+                            (targetTask.pomidorArray.length === 1 || isPomidor)
+                          }>
+                          Пропустить
                         </button>
                       )}
 
-                      {!isPomidor && (
-                        <button className='secondaryBtn' onClick={onSkip}>
-                          Пропустить
+                      {!isTimerActive && isPause && isPomidor && (
+                        <button className='secondaryBtn' onClick={onComplete}>
+                          Сделано
                         </button>
                       )}
                     </div>

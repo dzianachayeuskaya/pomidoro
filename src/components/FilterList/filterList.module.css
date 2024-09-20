@@ -2,12 +2,12 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-width: max(calc(100vw / 4), 150px);
+  min-width: max(calc(100vw / 4), 225px);
   border: 1px solid var(--grayDE);
 }
 
 .selectTitle {
-  padding: 20px 15px;
+  padding: 20px 48px 20px 24px;
   background-color: var(--grayF4);
   cursor: pointer;
   transition: background-color 0.2s ease, outline 0.2s ease;
@@ -61,7 +61,7 @@
 }
 
 .selectItem {
-  padding: 20px 15px;
+  padding: 20px 24px;
   border-top: 1px solid var(--grayDE);
   cursor: pointer;
   transition: background-color 0.2s ease, outline 0.2s ease;
@@ -83,6 +83,9 @@
 } */
 
 @media(min-width: 768px) {
+  .selectWrapper {
+    min-width: 325px;
+  }
 
   .selectTitle:focus-visible:hover,
   .selectTitle:focus-visible:active {

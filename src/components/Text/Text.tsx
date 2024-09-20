@@ -21,6 +21,7 @@ export enum EColor {
 interface ITextProps {
   As?: 'span' | 'h1' | 'h2' | 'h3' | 'h4' | 'p' | 'div';
   children?: ReactNode;
+  optional?: boolean;
   size: TSizes;
   mobileSize?: TSizes;
   tabletSize?: TSizes;
@@ -35,6 +36,7 @@ export function Text(props: ITextProps) {
     color = EColor.black,
     weight = 400,
     children,
+    optional = false,
     size,
     mobileSize,
     tabletSize,
@@ -45,6 +47,7 @@ export function Text(props: ITextProps) {
     styles[`s${size}`],
     styles[`w${weight}`],
     styles[color],
+    { [styles[`d-none`]]: optional },
     { [styles[`m${mobileSize}`]]: mobileSize },
     { [styles[`t${tabletSize}`]]: tabletSize },
     { [styles[`d${desktopSize}`]]: desktopSize }

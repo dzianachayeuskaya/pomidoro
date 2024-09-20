@@ -94,8 +94,8 @@ button:disabled {
 
 .primaryBtn,
 .secondaryBtn {
-  padding: 20px 50px;
-  min-width: 192px;
+  padding: 16px 24px;
+  min-width: 140px;
 }
 
 .primaryBtn {
@@ -243,6 +243,12 @@ button:disabled {
 }
 
 @media (min-width: 768px) {
+
+  .primaryBtn,
+  .secondaryBtn {
+    padding: 20px 50px;
+    min-width: 192px;
+  }
 
   .primaryBtn:hover,
   .primaryBtn:active {

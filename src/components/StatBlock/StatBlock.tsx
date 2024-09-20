@@ -13,7 +13,7 @@ enum EActiveColor {
 
 export enum EBlockType {
   focus = 'Фокус',
-  pause = 'Время на\u00A0паузе',
+  pause = 'Серия\u00A0дней',
   stops = 'Остановки',
 }
 interface IStatsBlockProps {
