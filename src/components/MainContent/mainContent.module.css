@@ -14,7 +14,7 @@
     width: 100%;
 }
 
-.inputGroup>.errorMessage {
+.inputGroup>.message {
     position: absolute;
 }
 
@@ -37,7 +37,7 @@
     transition: border .3s ease, color .3s ease;
 }
 
-.errorBlock {
+.messageBlock {
     position: fixed;
     bottom: 10px;
     right: 10px;
@@ -53,7 +53,7 @@
         color: var(--dark-green);
     }
 
-    .errorBlock {
+    .messageBlock {
         right: 20px;
         bottom: 20px;
         width: max(320px, 20%);
@@ -62,7 +62,7 @@
 }
 
 @media(min-width:1440px) {
-    .errorBlock {
+    .messageBlock {
         width: max(450px, 20%);
     }
 }

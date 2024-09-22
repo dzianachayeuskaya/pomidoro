@@ -10,8 +10,9 @@ import styles from './taskItem.module.css';
 
 import {
   EMessageKind,
+  EMessageType,
   ITask,
-  errorMessagesState,
+  messagesState,
   taskListState,
 } from '../../recoil_state';
 import { Link } from 'react-router-dom';
@@ -20,7 +21,7 @@ import { EIcons, Icon } from '../Icon';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 import { MenuItemsList, Option } from '../MenuItemsList';
-import { returnNewErrorMessages } from '../../utils/functions';
+import { returnNewMessages } from '../../utils/functions';
 
 interface ITaskItemProps {
   onTaskClick: (id: string) => void;
@@ -40,8 +41,7 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
     const [value, setValue] = useState(title);
     const [width, setWidth] = useState(title.length * 8);
     const setTaskList = useSetRecoilState(taskListState);
-    const [errorMessages, setErrorMessages] =
-      useRecoilState(errorMessagesState);
+    const [messages, setMessages] = useRecoilState(messagesState);
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
       setValue(e.target.value);
@@ -49,19 +49,20 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
         e.target.value.trim().length > 2 &&
         e.target.value.trim().length <= 255
       )
-        setErrorMessages((prev) =>
+        setMessages((prev) =>
           prev.filter((err) => err.kind !== EMessageKind.taskEdition)
         );
     };
 
     const onSave = () => {
       if (value.trim().length < 3 || value.trim().length > 255) {
-        if (!errorMessages.find((err) => err.kind === EMessageKind.taskEdition))
+        if (!messages.find((err) => err.kind === EMessageKind.taskEdition))
           setTimeout(
             () =>
-              setErrorMessages((prev) =>
-                returnNewErrorMessages(
+              setMessages((prev) =>
+                returnNewMessages(
                   EMessageKind.taskEdition,
+                  EMessageType.error,
                   'Введите корректное название задачи',
                   prev
                 )
@@ -78,7 +79,7 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
           item.id === id ? { ...item, title: value.trim() } : item
         )
       );
-      setErrorMessages((prev) =>
+      setMessages((prev) =>
         prev.filter((err) => err.kind !== EMessageKind.taskEdition)
       );
       setIsEditing(false);
@@ -102,15 +103,16 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const handleIncreaseClick = () => {
-      setErrorMessages((prev) =>
+      setMessages((prev) =>
         prev.filter((err) => err.kind !== EMessageKind.pomidorAdding)
       );
       if (isCompleted) {
         setTimeout(
           () =>
-            setErrorMessages((prev) =>
-              returnNewErrorMessages(
+            setMessages((prev) =>
+              returnNewMessages(
                 EMessageKind.pomidorAdding,
+                EMessageType.error,
                 'Выполнение задачи завершено.',
                 prev
               )
@@ -138,17 +140,28 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
             : task
         )
       );
+      setTimeout(
+        () =>
+          setMessages((prev) =>
+            returnNewMessages(
+              EMessageKind.pomidorAdding,
+              EMessageType.success,
+              '"Помидор" успешно добавлен.',
+              prev
+            )
+          ),
+        300
+      );
     };
 
     const handleDecreaseClick = () => {
-      setErrorMessages((prev) =>
+      setMessages((prev) =>
         prev.filter((err) => err.kind !== EMessageKind.pomidorDeleting)
       );
 
       let errorMessage = '';
       if (isCompleted) {
-        errorMessage =
-          'Выполнение задачи завершено.';
+        errorMessage = 'Выполнение задачи завершено.';
       } else if (pomidorArray.length < 2) {
         errorMessage =
           'Если уменьшить количество "помидоров", их не останется.';
@@ -160,9 +173,10 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
       if (errorMessage) {
         setTimeout(
           () =>
-            setErrorMessages((prev) =>
-              returnNewErrorMessages(
+            setMessages((prev) =>
+              returnNewMessages(
                 EMessageKind.pomidorDeleting,
+                EMessageType.error,
                 errorMessage,
                 prev
               )
@@ -181,6 +195,18 @@ export const TaskItem = forwardRef<HTMLLIElement, ITaskItem>(
               }
             : task
         )
+      );
+      setTimeout(
+        () =>
+          setMessages((prev) =>
+            returnNewMessages(
+              EMessageKind.pomidorDeleting,
+              EMessageType.success,
+              'Количество "помидоров" уменьшено.',
+              prev
+            )
+          ),
+        300
       );
     };
 

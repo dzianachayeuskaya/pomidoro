@@ -1,15 +1,22 @@
-.errorContainer {
+.container {
+    --mainColor: var(--red);
+    --mainDarkColor: var(--dark-red);
+    --bgColor: rgba(220, 62, 34, 0.2);
     position: relative;
     padding: 10px;
-    border: 1px solid var(--red);
-    color: var(--red);
-    background-color: rgba(220,
-            62,
-            34, 0.2);
+    border: 1px solid var(--mainColor);
+    color: var(--mainColor);
+    background-color: var(--bgColor);
     transition: all 0.2s ease;
 }
 
-.errorContainer:not(:last-child) {
+.container.success {
+    --mainColor: var(--green);
+    --mainDarkColor: var(--dark-green);
+    --bgColor: rgba(168, 182, 79, .2);
+}
+
+.container:not(:last-child) {
     margin-bottom: 10px;
 }
 
@@ -22,16 +29,16 @@
 }
 
 .closeBtn:focus-visible {
-    outline: 1px solid var(--dark-red);
+    outline: 1px solid var(--mainDarkColor);
 }
 
 .closeBtn path {
-    fill: var(--red);
+    fill: var(--mainColor);
     transition: fill 0.2s ease;
 }
 
 @media(min-width: 768px) {
-    .errorContainer {
+    .container {
         padding: 20px;
     }
 
@@ -46,6 +53,6 @@
 
     .closeBtn:hover path,
     .closeBtn:active path {
-        fill: var(--dark-red)
+        fill: var(--mainDarkColor);
     }
 }

@@ -1,34 +1,30 @@
 import React, { forwardRef, useEffect } from 'react';
-import styles from './errormessage.module.css';
+import styles from './message.module.css';
 import { EIcons, Icon } from '../Icon';
 import { useSetRecoilState } from 'recoil';
-import { errorMessagesState } from '../../recoil_state';
+import {  IMessage, messagesState } from '../../recoil_state';
+import classNames from 'classnames';
 
-interface IErrorMessage {
-  message: string;
-  id: string;
-}
-
-export const ErrorMessage = forwardRef<HTMLDivElement, IErrorMessage>(
-  ({ message, id }, ref) => {
-    const setErrorMessages = useSetRecoilState(errorMessagesState);
+export const Message = forwardRef<HTMLDivElement, IMessage>(
+  ({ message, id , type}, ref) => {
+    const setMessages = useSetRecoilState(messagesState);
 
     useEffect(() => {
       const timeoutId = setTimeout(() => {
-        setErrorMessages((prev) => prev.filter((err) => err.id !== id));
+        setMessages((prev) => prev.filter((err) => err.id !== id));
       }, 3000);
 
       return () => {
         clearTimeout(timeoutId);
       };
-    }, [id, setErrorMessages]);
+    }, [id, setMessages]);
 
     const handleClose = () => {
-      setErrorMessages((prev) => prev.filter((err) => err.id !== id));
+      setMessages((prev) => prev.filter((err) => err.id !== id));
     };
 
     return (
-      <div ref={ref} className={styles.errorContainer}>
+      <div ref={ref} className={classNames(styles.container, styles[type])}>
         <button
           className={styles.closeBtn}
           aria-label='Закрыть окно'

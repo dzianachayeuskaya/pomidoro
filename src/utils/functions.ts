@@ -1,5 +1,5 @@
 import { RefObject, createRef } from 'react';
-import { EMessageKind, IMessage } from '../recoil_state';
+import { EMessageKind, EMessageType, IMessage } from '../recoil_state';
 
 export function determineRect(containerRef: RefObject<HTMLDivElement>) {
   if (containerRef.current) {
@@ -62,8 +62,9 @@ export function getRandomAlphanumericString(length: number) {
   return result;
 }
 
-export function returnNewErrorMessages(
+export function returnNewMessages(
   kind: EMessageKind,
+  type: EMessageType,
   message: string,
   prevMessages: IMessage[]
 ): IMessage[] {
@@ -72,6 +73,7 @@ export function returnNewErrorMessages(
     {
       kind,
       id: getRandomAlphanumericString(4),
+      type,
       message,
       nodeRef: createRef<HTMLDivElement>(),
     },

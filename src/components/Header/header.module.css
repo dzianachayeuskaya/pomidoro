@@ -47,8 +47,10 @@
         transition: fill 0.3s ease;
     }
 
-    .linkContainer:hover path,
-    .linkContainer:active path {
+    .linkContainer:not(.linkLogo):hover path,
+    .linkLogo:hover path:first-child,
+    .linkContainer:not(.linkLogo):active path,
+    .linkLogo:active path:first-child {
         fill: var(--dark-red);
     }
 

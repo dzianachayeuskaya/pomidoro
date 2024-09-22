@@ -7,17 +7,13 @@ import React, {
 } from 'react';
 import styles from './mainContent.module.css';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  errorMessagesState,
-  taskListState,
-  titleState,
-} from '../../recoil_state';
+import { messagesState, taskListState, titleState } from '../../recoil_state';
 import { Break } from '../Break';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { getRandomAlphanumericString } from '../../utils/functions';
 import { TaskItem } from '../TaskItem';
 import { EColor, Text } from '../Text';
-import { ErrorMessage } from '../ErrorMessage';
+import { Message } from '../Message';
 import { ModalWindow } from '../ModalWindow';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
@@ -31,7 +27,7 @@ export function MainContent() {
 
   const [activeTaskId, setActiveTaskId] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const errorMessages = useRecoilValue(errorMessagesState);
+  const messages = useRecoilValue(messagesState);
 
   useEffect(() => {
     localStorage.setItem('taskList', JSON.stringify(taskList));
@@ -185,8 +181,8 @@ export function MainContent() {
           Отмена
         </button>
       </ModalWindow>
-      <TransitionGroup className={styles.errorBlock}>
-        {errorMessages.map(({ nodeRef, id, ...err }) => {
+      <TransitionGroup className={styles.messageBlock}>
+        {messages.map(({ nodeRef, id, ...msg }) => {
           const refObject = {
             current:
               nodeRef instanceof Object && 'current' in nodeRef
@@ -199,7 +195,7 @@ export function MainContent() {
               nodeRef={refObject}
               timeout={300}
               classNames='drop'>
-              <ErrorMessage key={id} id={id} {...err} ref={refObject} />
+              <Message key={id} id={id} {...msg} nodeRef={refObject} />
             </CSSTransition>
           );
         })}

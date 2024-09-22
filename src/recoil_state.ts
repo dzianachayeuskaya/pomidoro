@@ -51,10 +51,15 @@ export enum EMessageKind {
   pomidorAdding = 'pomidorAdding',
   taskSearch = 'taskSearch',
 }
+export enum EMessageType {
+  error = 'error',
+  success = 'success',
+}
 
 export interface IMessage {
   kind: EMessageKind;
   id: string;
+  type: EMessageType;
   message: string;
   nodeRef: MutableRefObject<HTMLDivElement | null>;
 }
@@ -267,8 +272,8 @@ const timeIntervalState = atom<IPomidorInterval>({
       },
 });
 
-const errorMessagesState = atom<IMessage[]>({
-  key: 'errorMessagesState',
+const messagesState = atom<IMessage[]>({
+  key: 'messagesState',
   default: [],
 });
 export {
@@ -277,5 +282,5 @@ export {
   statDataState,
   timeIntervalState,
   taskListFilterState,
-  errorMessagesState,
+  messagesState,
 };
