@@ -1,14 +1,14 @@
 import React, { useState, MouseEvent } from 'react';
-import styles from './statPage.module.css';
-import { EColor, Text } from '../Text';
-import { EBlockType, StatBlock } from '../StatBlock';
-import { Break } from '../Break';
+import styles from './stat.module.css';
+import { EColor, Text } from '../../components/Text';
+import { EBlockType, StatBlock } from '../../components/StatBlock';
+import { Break } from '../../components/Break';
 import classNames from 'classnames';
-import { EIcons, Icon } from '../Icon';
+import { EIcons, Icon } from '../../components/Icon';
 import { declOfNum, formatTimeToStringWithWord } from '../../utils/functions';
 import { useRecoilValue } from 'recoil';
 import { EFilter, statDataState } from '../../recoil_state';
-import { FilterList } from '../FilterList';
+import { FilterList } from '../../components/FilterList';
 
 enum EActiveDay {
   mon,
@@ -36,7 +36,7 @@ const activeDayOfWeek = new Date().getDay() ? new Date().getDay() - 1 : 6;
 
 const options = [EFilter.current, EFilter.last, EFilter.beforeLast];
 
-export function StatPage() {
+export function Stat() {
   const [activeDay, setActiveDay] = useState(activeDayOfWeek);
 
   const data = useRecoilValue(statDataState);

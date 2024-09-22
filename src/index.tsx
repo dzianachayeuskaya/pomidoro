@@ -6,10 +6,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { Layout } from './components/Layout';
-import { StatPage } from './components/StatPage';
+import { Stat } from './pages/Stat';
 import { NotFound } from './pages/NotFound';
 import { MainContent } from './components/MainContent';
 import { TimerBlock } from './components/TimerBlock';
+import { Info } from './pages/Info';
+import { Settings } from './pages/Settings';
 
 const router = createBrowserRouter([
   {
@@ -29,7 +31,15 @@ const router = createBrowserRouter([
       },
       {
         path: 'statistics',
-        element: <StatPage />,
+        element: <Stat />,
+      },
+      {
+        path: 'info',
+        element: <Info />,
+      },
+      {
+        path: 'settings',
+        element: <Settings />,
       },
     ],
   },

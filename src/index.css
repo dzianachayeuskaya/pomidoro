@@ -22,8 +22,16 @@
   --gray99: hsl(0, 0%, calc(var(--whiteLightness) - 40%));
   --gray66: hsl(0, 0%, calc(var(--whiteLightness) - 60%));
   --s-max-width: 300px;
-  --m-max-width: 700px;
+  --m-max-width: 736px;
   --l-max-width: 1280px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -50,6 +58,7 @@ ol {
 
 a {
   text-decoration: none;
+  transition: color .3s ease;
 }
 
 a:active {
@@ -73,8 +82,22 @@ input {
   line-height: 19px;
 }
 
-input {
-  box-sizing: border-box;
+.vw100 {
+  width: 100vw;
+}
+
+.vh100 {
+  height: 100vh;
+}
+
+.flexCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flexColumn {
+  flex-direction: column;
 }
 
 button {
@@ -110,9 +133,9 @@ button:disabled {
   outline: none;
 }
 
-.primaryBtn:disabled,
-.primaryBtn:disabled:hover,
-.primaryBtn:disabled:active {
+.primaryBtn:disabled:not(.readonly),
+.primaryBtn:disabled:not(.readonly):hover,
+.primaryBtn:disabled:not(.readonly):active {
   opacity: 0.5;
   background-color: var(--green);
 }
@@ -130,9 +153,9 @@ button:disabled {
   outline: none;
 }
 
-.secondaryBtn:disabled,
-.secondaryBtn:disabled:hover,
-.secondaryBtn:disabled:active {
+.secondaryBtn:disabled:not(.readonly),
+.secondaryBtn:disabled:not(.readonly):hover,
+.secondaryBtn:disabled:not(.readonly):active {
   color: var(--grayC4);
   border: 2px solid var(--grayC4);
   opacity: 1;
@@ -153,16 +176,60 @@ button:disabled {
   outline: none;
 }
 
-.secondaryBtn.active:disabled,
-.secondaryBtn.active:disabled:hover,
-.secondaryBtn.active:disabled:active {
+.secondaryBtn.active:disabled:not(.readonly),
+.secondaryBtn.active:disabled:not(.readonly):hover,
+.secondaryBtn.active:disabled:not(.readonly):active {
   opacity: 0.5;
   background-color: var(--green);
 }
 
+.addBtn {
+  position: absolute;
+  top: 50%;
+  right: -50px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.addBtn.readonly {
+  position: static;
+  transform: unset;
+}
+
+.btnWrapper {
+  min-width: 140px;
+}
+
+.addBtn svg {
+  width: 35px;
+  height: 35px;
+}
+
+.addBtn circle {
+  transition: fill .3s ease
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.leftBlock,
+.rightBlock {
+  display: flex;
+  flex-direction: column;
+  width: min(450px, 100%);
+}
+
+.leftBlock {
+  align-items: flex-start;
+}
+
 .drop-with-translate-enter {
   opacity: 0;
-  transform: scale(0.9) translateY(-10px) translateX(5vw);
+  transform: translateY(-10px) translateX(5vw);
 }
 
 .drop-with-translate-enter-active {
@@ -177,13 +244,13 @@ button:disabled {
 
 .drop-with-translate-exit-active {
   opacity: 0;
-  transform: scale(0.9) translateY(-10px) translateX(5vw);
+  transform: translateY(-10px) translateX(5vw);
   transition: opacity 300ms, transform 300ms;
 }
 
 .drop-enter {
   opacity: 0;
-  transform: scale(0.9) translateY(-10px);
+  transform: translateY(-10px);
 }
 
 .drop-enter-active {
@@ -198,8 +265,7 @@ button:disabled {
 
 .drop-exit-active {
   opacity: 0;
-  transform: scale(0.9) translateY(-10px);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 300ms;
 }
 
 .fade-enter {
@@ -222,27 +288,71 @@ button:disabled {
 
 .page-enter {
   opacity: 0;
-  transform: scale(1.1);
 }
 
 .page-enter-active {
   opacity: 1;
-  transform: scale(1);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 300ms;
 }
 
 .page-exit {
   opacity: 1;
-  transform: scale(1);
 }
 
 .page-exit-active {
   opacity: 0;
-  transform: scale(0.9);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 300ms;
 }
 
 @media (min-width: 768px) {
+
+  .primaryBtn:not(.readonly):hover,
+  .primaryBtn:not(.readonly):active {
+    opacity: 1;
+    background-color: var(--dark-green);
+  }
+
+  .secondaryBtn:not(.readonly):hover,
+  .secondaryBtn:not(.readonly):active {
+    color: var(--white);
+    border: 2px solid var(--red);
+    opacity: 1;
+    background-color: var(--red);
+  }
+
+  .secondaryBtn.active:not(.readonly):hover,
+  .secondaryBtn.active:not(.readonly):active {
+    border: 2px solid var(--dark-red);
+    opacity: 1;
+    background-color: var(--dark-red);
+  }
+
+  .addBtn svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  .addBtn:not(.readonly):hover circle,
+  .addBtn:not(.readonly):active circle {
+    fill: var(--dark-green)
+  }
+
+  .mainContent {
+    flex-direction: row;
+    align-items: start;
+    justify-content: space-between;
+  }
+
+  .leftBlock {
+    width: min(40%, 700px);
+  }
+
+  .rightBlock {
+    width: 60%;
+  }
+}
+
+@media (min-width: 1440px) {
 
   .primaryBtn,
   .secondaryBtn {
@@ -250,24 +360,15 @@ button:disabled {
     min-width: 192px;
   }
 
-  .primaryBtn:hover,
-  .primaryBtn:active {
-    opacity: 1;
-    background-color: var(--dark-green);
+  .btnWrapper {
+    min-width: 192px;
   }
 
-  .secondaryBtn:hover,
-  .secondaryBtn:active {
-    color: var(--white);
-    border: 2px solid var(--red);
-    opacity: 1;
-    background-color: var(--red);
+  .mainContent {
+    gap: 50px;
   }
 
-  .secondaryBtn.active:hover,
-  .secondaryBtn.active:active {
-    border: 2px solid var(--dark-red);
-    opacity: 1;
-    background-color: var(--dark-red);
+  .rightBlock {
+    width: calc((100% - 50px) / 2);
   }
 }

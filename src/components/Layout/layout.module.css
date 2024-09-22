@@ -1,15 +1,16 @@
 .layout {
   max-width: max(90%, var(--s-max-width));
   margin: 0 auto;
+  padding: 100px 0 200px;
 }
 
-@media(min-width: 768px) {
+@media (min-width: 768px) {
   .layout {
     max-width: max(75%, var(--m-max-width));
   }
 }
 
-@media(min-width: 1440px) {
+@media (min-width: 1440px) {
   .layout {
     max-width: max(75%, var(--l-max-width));
   }

@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 100px 0;
 }
 
 .header {
@@ -48,7 +47,6 @@
 }
 
 .activityBlock {
-    box-sizing: border-box;
     flex-direction: column;
     align-items: flex-start;
     padding: 25px;

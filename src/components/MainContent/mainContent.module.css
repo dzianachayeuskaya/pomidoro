@@ -1,23 +1,4 @@
-.mainContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 100px 0 200px;
-    gap: 25px;
-}
 
-.descrBlock {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.taskListBlock {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: min(450px, 100%);
-}
 
 .input {
     padding: 19px 15px;
@@ -66,17 +47,6 @@
 }
 
 @media(min-width:768px) {
-    .mainContent {
-        flex-direction: row;
-        align-items: start;
-        justify-content: space-between;
-    }
-
-    .descrBlock {
-        max-width: calc((100% - 25px) / 2);
-        align-items: flex-start;
-    }
-
     .cancelBtn:hover,
     .cancelBtn:active {
         border-bottom: 1px solid var(--dark-green);
@@ -92,13 +62,6 @@
 }
 
 @media(min-width:1440px) {
-    .mainContent{
-        gap: 50px;
-    }
-    .descrBlock {
-        width: calc((100% - 50px) / 2);
-    }
-
     .errorBlock {
         width: max(450px, 20%);
     }

@@ -435,7 +435,7 @@ export function TimerBlock() {
             timeout={300}
             classNames='page'
             unmountOnExit>
-            <div className={styles.timerContainer} ref={nodeRef}>
+            <div className='rightBlock' ref={nodeRef}>
               <div
                 className={classNames(styles.timerHeader, {
                   [styles.work]:
@@ -473,7 +473,7 @@ export function TimerBlock() {
                         {formatTimeToStringWithColon(currentTime)}
                       </span>
                       <button
-                        className={styles.addBtn}
+                        className='addBtn'
                         onClick={addPomidor}
                         aria-label='Добавить новый помидор'>
                         <Icon name={EIcons.add} />
@@ -508,7 +508,9 @@ export function TimerBlock() {
                           onClick={onSkip}
                           disabled={
                             !isTimerActive &&
-                            (targetTask.pomidorArray.length === 1 || isPomidor)
+                            ((targetTask.pomidorArray.length === 1 &&
+                              isPomidor) ||
+                              isPomidor)
                           }>
                           Пропустить
                         </button>

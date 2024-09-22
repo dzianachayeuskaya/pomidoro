@@ -3,11 +3,9 @@ import React, {
   KeyboardEvent,
   createRef,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 import styles from './mainContent.module.css';
-import { UlList } from '../UlList';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   errorMessagesState,
@@ -23,14 +21,6 @@ import { ErrorMessage } from '../ErrorMessage';
 import { ModalWindow } from '../ModalWindow';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
-const list = [
-  'Создайте или выберите задачу, над которой хотите работать',
-  'Запустите таймер («помидор»)',
-  'Работайте пока «помидор» не прозвонит',
-  'Сделайте короткий перерыв (3-5 минут)',
-  'Продолжайте работать «помидор» за «помидором», пока задача не будет выполнена. Каждые 4 «помидора» делайте длинный перерыв (15-30 минут).'
-];
-
 export function MainContent() {
   const [taskTitle, setTaskTitle] = useRecoilState(titleState);
   const [taskList, setTaskList] = useRecoilState(taskListState);
@@ -42,11 +32,6 @@ export function MainContent() {
   const [activeTaskId, setActiveTaskId] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const errorMessages = useRecoilValue(errorMessagesState);
-
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (ref.current) ref.current.click();
-  }, []);
 
   useEffect(() => {
     localStorage.setItem('taskList', JSON.stringify(taskList));
@@ -130,69 +115,65 @@ export function MainContent() {
   };
 
   return (
-    <div className={styles.mainContent}>
-      <div className={styles.descrBlock} ref={ref}>
-        <UlList title='Теперь можно начать работать:' list={list} />
-        <div className={styles.taskListBlock}>
-          <Break size={25} top />
-          <div className={styles.inputGroup}>
-            <input
-              type='text'
-              name='title'
-              className={styles.input}
-              placeholder='Название задачи'
-              value={taskTitle}
-              onChange={handleChange}
-              onKeyUp={handleKeyUp}
-              onBlur={handleBlur}
-              aria-invalid={validationError ? 'true' : undefined}
-            />
-            {validationError && (
-              <div className={styles.errorMessage}>
-                <Text size={12} color={EColor.grayC4}>
-                  {validationError}
-                </Text>
-              </div>
-            )}
-          </div>
-          <Break size={25} top />
-          <button
-            className='primaryBtn'
-            onClick={addTask}
-            disabled={!!validationError && isTouched}>
-            Добавить
-          </button>
-          <Break size={25} top />
-          <div className={styles.divider}></div>
-          <TransitionGroup className={styles.taskList}>
-            {taskList.map((item) => {
-              const taskRef = item.taskRef;
-              const refObject = {
-                current:
-                  taskRef instanceof Object && 'current' in taskRef
-                    ? taskRef.current
-                    : null,
-              };
-
-              return item.isDeleted ? null : (
-                <CSSTransition
-                  key={item.id}
-                  nodeRef={refObject}
-                  timeout={300}
-                  classNames='drop'>
-                  <TaskItem
-                    key={item.id}
-                    {...item}
-                    ref={refObject}
-                    onTaskClick={onTaskClick}
-                    handleDeleteClick={handleDeleteClick}
-                  />
-                </CSSTransition>
-              );
-            })}
-          </TransitionGroup>
-          <div className={styles.divider}></div>
+    <div className='mainContent'>
+      <div className='leftBlock'>
+        <div className={styles.inputGroup}>
+          <input
+            type='text'
+            name='title'
+            className={styles.input}
+            placeholder='Название задачи'
+            value={taskTitle}
+            onChange={handleChange}
+            onKeyUp={handleKeyUp}
+            onBlur={handleBlur}
+            aria-invalid={validationError ? 'true' : undefined}
+          />
+          {validationError && (
+            <div className={styles.errorMessage}>
+              <Text size={12} color={EColor.grayC4}>
+                {validationError}
+              </Text>
+            </div>
+          )}
         </div>
+        <Break size={25} top />
+        <button
+          className='primaryBtn'
+          onClick={addTask}
+          disabled={!!validationError && isTouched}>
+          Добавить
+        </button>
+        <Break size={25} top />
+        <div className={styles.divider}></div>
+        <TransitionGroup className={styles.taskList}>
+          {taskList.map((item) => {
+            const taskRef = item.taskRef;
+            const refObject = {
+              current:
+                taskRef instanceof Object && 'current' in taskRef
+                  ? taskRef.current
+                  : null,
+            };
+
+            return item.isDeleted ? null : (
+              <CSSTransition
+                key={item.id}
+                nodeRef={refObject}
+                timeout={300}
+                classNames='drop'>
+                <TaskItem
+                  key={item.id}
+                  {...item}
+                  ref={refObject}
+                  onTaskClick={onTaskClick}
+                  handleDeleteClick={handleDeleteClick}
+                />
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
+        <div className={styles.divider}></div>
       </div>
       <ModalWindow onClose={onCancel} isOpen={isModalOpen}>
         <Text size={24}>Удалить задачу?</Text>

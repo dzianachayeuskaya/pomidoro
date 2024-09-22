@@ -1,0 +1,33 @@
+.bottomBlock {
+    align-items: start;
+    gap: 25px;
+    border: 1px solid var(--grayC4);
+    padding: 30px;
+}
+
+.bottomBlock .row {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.linkBtn {
+    display: block;
+    max-width: fit-content;
+    margin: 0 auto;
+}
+
+@media(min-width:768px) {
+    .linkBtn {
+        margin: 0;
+    }
+    .linkBtn:active {
+        color: var(--white);
+    }
+}
+
+@media(min-width:1440px) {
+    .bottomBlock {
+        padding: 50px;
+    }
+}
