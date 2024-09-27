@@ -7,20 +7,45 @@ import React, {
   useCallback,
 } from 'react';
 import classNames from 'classnames';
-import styles from './filterList.module.css';
-import { EFilter, taskListFilterState } from '../../recoil_state';
-import { useRecoilState } from 'recoil';
+import styles from './dropList.module.css';
+import {
+  EFilter,
+  ETimeIntervalType,
+  ITimeIntervalObject,
+  taskListFilterState,
+  timeIntervalState,
+} from '../../recoil_state';
+import { RecoilState, useRecoilState } from 'recoil';
 import { CSSTransition } from 'react-transition-group';
+import { formatTimeToStringWithWord } from '../../utils/functions';
 
-interface IFilterList {
-  options: EFilter[];
+export enum EDropListType {
+  taskListFilter = 'taskListFilter',
+  settings = 'settings',
 }
 
-export function FilterList({ options }: IFilterList) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+interface IDropList {
+  options: (string | number)[];
+  type: EDropListType;
+  intervalType?: ETimeIntervalType;
+  listLabel?: string;
+}
+
+export function DropList({
+  options,
+  type,
+  intervalType,
+  listLabel,
+}: IDropList) {
+  const [isDropOpen, setIsDropOpen] = useState(false);
   // const [selectedIndex, setSelectedIndex] = useState(0);
-  const [taskListFilter, setTaskListFilter] =
-    useRecoilState(taskListFilterState);
+
+  const [state, setState] = useRecoilState(
+    (type === EDropListType.settings
+      ? timeIntervalState
+      : taskListFilterState) as RecoilState<ITimeIntervalObject | EFilter>
+  );
+
   const divRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -28,24 +53,33 @@ export function FilterList({ options }: IFilterList) {
     e: MouseEvent<HTMLLIElement> | KeyboardEvent<HTMLLIElement>
   ) => {
     if (e.target instanceof HTMLElement) {
-      setTaskListFilter(e.target.getAttribute('data-value') as EFilter);
+      const value = e.target.getAttribute('data-value');
+
+      if (type === EDropListType.taskListFilter) {
+        setState(value as EFilter);
+      } else if (type === EDropListType.settings && intervalType) {
+        setState((prev: any) => ({
+          ...prev,
+          [intervalType]: Number(value),
+        }));
+      }
     }
   };
 
   const onSelectKeyUp = (e: KeyboardEvent<HTMLLIElement>) => {
     if (e.key === 'Enter') {
       onSelect(e);
-      setIsFilterOpen(false);
+      setIsDropOpen(false);
     }
   };
 
-  const onFilterOpen = () => {
-    setIsFilterOpen(!isFilterOpen);
+  const onOpen = () => {
+    setIsDropOpen(!isDropOpen);
   };
 
   const onSelectTitleKeyUp = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      setIsFilterOpen(!isFilterOpen);
+      setIsDropOpen(!isDropOpen);
     }
     // if (e.key === 'ArrowDown') {
     //   e.preventDefault();
@@ -70,12 +104,12 @@ export function FilterList({ options }: IFilterList) {
       if (
         e.target instanceof HTMLElement &&
         !divRef.current?.contains(e.target) &&
-        isFilterOpen
+        isDropOpen
       ) {
-        setIsFilterOpen(false);
+        setIsDropOpen(false);
       }
     },
-    [isFilterOpen]
+    [isDropOpen]
   );
 
   useEffect(() => {
@@ -86,22 +120,34 @@ export function FilterList({ options }: IFilterList) {
     };
   }, [onDocumentClickCb]);
 
+  useEffect(() => {
+    if (type === EDropListType.settings) {
+      localStorage.setItem('timeIntervalObject', JSON.stringify(state));
+    }
+  }, [state, type]);
+
   return (
     <form>
+      {listLabel && <div className={styles.label}>{listLabel}</div>}
       <div
         className={classNames(styles.selectWrapper, {
-          [styles.isOpen]: isFilterOpen,
+          [styles.isOpen]: isDropOpen,
+          [styles.selectWrapperMax]: type === EDropListType.settings,
         })}
         ref={divRef}
-        onClick={onFilterOpen}>
+        onClick={onOpen}>
         <div
           className={styles.selectTitle}
           tabIndex={0}
           onKeyUp={onSelectTitleKeyUp}>
-          {taskListFilter}
+          {intervalType && typeof state === 'object' && intervalType in state
+            ? formatTimeToStringWithWord(state[intervalType])
+            : typeof state === 'string'
+            ? state
+            : 0}
         </div>
         <CSSTransition
-          in={isFilterOpen}
+          in={isDropOpen}
           nodeRef={listRef}
           timeout={300}
           classNames='drop'
@@ -110,7 +156,14 @@ export function FilterList({ options }: IFilterList) {
             {options.map((item, i) => (
               <li
                 className={classNames(styles.selectItem, {
-                  [styles.isActive]: taskListFilter === item,
+                  [styles.isActive]:
+                    (intervalType &&
+                    typeof state === 'object' &&
+                    intervalType in state
+                      ? state[intervalType]
+                      : typeof state === 'string'
+                      ? state
+                      : 0) === item,
                   // [styles.isSelected]: selectedIndex === i,
                 })}
                 key={item}
@@ -118,7 +171,9 @@ export function FilterList({ options }: IFilterList) {
                 onKeyUp={onSelectKeyUp}
                 data-value={item}
                 tabIndex={0}>
-                {item}
+                {typeof item === 'number'
+                  ? formatTimeToStringWithWord(item)
+                  : item}
               </li>
             ))}
           </ul>

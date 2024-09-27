@@ -47,7 +47,7 @@ export function TimerBlock() {
   const { taskId } = useParams();
 
   const [taskList, setTaskList] = useRecoilState(taskListState);
-  const [{ pomidorTime, breakTime }] = useRecoilState(timeIntervalState);
+  const [{ pomidorTime, shortBreakTime, longBreakTime }] = useRecoilState(timeIntervalState);
 
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [isPause, setIsPause] = useState(false);
@@ -63,8 +63,8 @@ export function TimerBlock() {
   const [nodeRef, setNodeRef] =
     useState<MutableRefObject<HTMLDivElement | null> | null>(null);
 
-  const [currentTime, setCurrentTime] = useState(
-    isPomidor ? pomidorTime : breakTime
+  const [currentTime, setCurrentTime] = useState<number>(
+    isPomidor ? pomidorTime : shortBreakTime
   );
 
   const changeList = useCallback(
@@ -275,8 +275,8 @@ export function TimerBlock() {
     setIsPomidor(!isPomidor);
     console.log('onNext', isPomidor);
 
-    setCurrentTime(isPomidor ? breakTime : pomidorTime);
-  }, [finishTimer, isPomidor, breakTime, pomidorTime]);
+    setCurrentTime(isPomidor ? shortBreakTime : pomidorTime);
+  }, [finishTimer, isPomidor, shortBreakTime, pomidorTime]);
 
   const onSkip = () => {
     finishTimer(EActions.addPomidor);
@@ -383,9 +383,9 @@ export function TimerBlock() {
           ) || 0;
         console.log('elapsed time: ', elapsedTime);
 
-        setCurrentTime((isPomidor ? pomidorTime : breakTime) - elapsedTime);
+        setCurrentTime((isPomidor ? pomidorTime : shortBreakTime) - elapsedTime);
       } else {
-        setCurrentTime(isPomidor ? pomidorTime : breakTime);
+        setCurrentTime(isPomidor ? pomidorTime : shortBreakTime);
         console.log('isPomidorNew');
       }
     }
@@ -394,7 +394,7 @@ export function TimerBlock() {
     taskId,
     isPomidor,
     pomidorTime,
-    breakTime,
+    shortBreakTime,
     isTimerActive,
     isCompleted,
     isPomidorNew,

@@ -1,0 +1,30 @@
+.row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+}
+
+.dropContainer {
+    width: 290px;
+}
+
+@media(min-width: 768px) {
+    .dropContainer {
+        width: 325px;
+    }
+}
+
+@media(min-width: 1200px) {
+    .row {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 25px;
+    }
+}
+
+@media(min-width: 1600px) {
+    .row {
+        justify-content: flex-start;
+    }
+}

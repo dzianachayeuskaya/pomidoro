@@ -25,9 +25,16 @@ export interface ITask {
   timerBlockRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-export interface IPomidorInterval {
-  pomidorTime: number;
-  breakTime: number;
+export enum ETimeIntervalType {
+  pomidorTime = 'pomidorTime',
+  shortBreakTime = 'shortBreakTime',
+  longBreakTime = 'longBreakTime',
+}
+
+export interface ITimeIntervalObject {
+  [ETimeIntervalType.pomidorTime]: TPomidorDuration;
+  [ETimeIntervalType.shortBreakTime]: TShortBreakDuration;
+  [ETimeIntervalType.longBreakTime]: TLongBreakDuration;
 }
 
 export enum EFilter {
@@ -35,6 +42,10 @@ export enum EFilter {
   last = 'Прошедшая неделя',
   beforeLast = '2 недели назад',
 }
+
+export type TPomidorDuration = 900000 | 1500000 | 2100000;
+export type TShortBreakDuration = 300000 | 600000 | 900000;
+export type TLongBreakDuration = 1200000 | 1800000 | 2400000;
 
 export interface ITimeByDay {
   work: number;
@@ -64,23 +75,23 @@ export interface IMessage {
   nodeRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-const titleState = atom({
+export const titleState = atom({
   key: 'titleState',
   default: '',
 });
 
-const taskListFilterState = atom({
+export const taskListFilterState = atom({
   key: 'taskListFilterState',
   default: EFilter.current,
 });
 
 const storageTaskList = localStorage.getItem('taskList');
-const taskListState = atom<ITask[]>({
+export const taskListState = atom<ITask[]>({
   key: 'taskListState',
   default: storageTaskList ? JSON.parse(storageTaskList) : [],
 });
 
-const statDataState = selector({
+export const statDataState = selector({
   key: 'statDataState',
   get: ({ get }) => {
     const timeByDay: ITimeByDay[] = [];
@@ -258,29 +269,19 @@ const statDataState = selector({
   },
 });
 
-const storageTimeInterval = localStorage.getItem('timeInterval');
-const timeIntervalState = atom<IPomidorInterval>({
+const storageTimeIntervalObject = localStorage.getItem('timeIntervalObject');
+export const timeIntervalState = atom<ITimeIntervalObject>({
   key: 'timeIntervalState',
-  default: storageTimeInterval
-    ? JSON.parse(storageTimeInterval)
+  default: storageTimeIntervalObject
+    ? JSON.parse(storageTimeIntervalObject)
     : {
-        pomidorTime:
-          // 1500000
-          10000,
-        // breakTime: 300000,
-        breakTime: 20000,
+        [ETimeIntervalType.pomidorTime]: 900000,
+        [ETimeIntervalType.shortBreakTime]: 300000,
+        [ETimeIntervalType.longBreakTime]: 1200000,
       },
 });
 
-const messagesState = atom<IMessage[]>({
+export const messagesState = atom<IMessage[]>({
   key: 'messagesState',
   default: [],
 });
-export {
-  titleState,
-  taskListState,
-  statDataState,
-  timeIntervalState,
-  taskListFilterState,
-  messagesState,
-};

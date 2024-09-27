@@ -1,3 +1,7 @@
+.label {
+  margin-bottom: 16px;
+}
+
 .selectWrapper {
   position: relative;
   display: flex;
@@ -6,8 +10,12 @@
   border: 1px solid var(--grayDE);
 }
 
+.selectWrapper.selectWrapperMax {
+  min-width: 100%;
+}
+
 .selectTitle {
-  padding: 20px 48px 20px 24px;
+  padding: 16px 48px 16px 24px;
   background-color: var(--grayF4);
   cursor: pointer;
   transition: background-color 0.2s ease, outline 0.2s ease;
@@ -106,5 +114,12 @@
   .selectItem:focus-visible:active {
     border-top: 1px solid var(--grayDE);
     outline: none;
+  }
+}
+
+@media(min-width: 1200px) {
+  .selectTitle {
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 }

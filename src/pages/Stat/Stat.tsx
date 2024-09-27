@@ -7,8 +7,8 @@ import classNames from 'classnames';
 import { EIcons, Icon } from '../../components/Icon';
 import { declOfNum, formatTimeToStringWithWord } from '../../utils/functions';
 import { useRecoilValue } from 'recoil';
-import { EFilter, statDataState } from '../../recoil_state';
-import { FilterList } from '../../components/FilterList';
+import {  EFilter, statDataState } from '../../recoil_state';
+import { DropList, EDropListType } from '../../components/DropList';
 
 enum EActiveDay {
   mon,
@@ -72,7 +72,10 @@ export function Stat() {
         <Text As='h3' size={24} weight={700}>
           Ваша активность
         </Text>
-        <FilterList options={options} />
+        <DropList
+          options={options}
+          type={EDropListType.taskListFilter}
+        />
       </div>
       <div className={styles.main}>
         <div className={styles.aside}>
