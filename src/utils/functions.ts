@@ -1,5 +1,11 @@
 import { RefObject, createRef } from 'react';
-import { EMessageKind, EMessageType, IMessage } from '../recoil_state';
+import {
+  EMessageKind,
+  EMessageType,
+  IMessage,
+  ITimeInterval,
+  TBreakInterval,
+} from '../recoil_state';
 
 export function determineRect(containerRef: RefObject<HTMLDivElement>) {
   if (containerRef.current) {
@@ -16,32 +22,6 @@ export function determineRect(containerRef: RefObject<HTMLDivElement>) {
   return { top: 0, right: 0 };
 }
 
-export function formatTimeToStringWithColon(time: number): string {
-  const sec = Math.ceil(time / 1000) % 60;
-  const min = Math.floor(time / 1000 / 60) % 60;
-  const hours = Math.floor(time / 1000 / 60 / 60);
-  return `${hours ? (hours < 10 ? `0${hours}:` : `${hours}:`) : ''}${
-    min > 9 ? '' : '0'
-  }${min}:${sec > 9 ? '' : '0'}${sec}`;
-}
-
-export function formatTimeToStringWithWord(time: number): string {
-  const min = Math.ceil(time / 1000 / 60) % 60;
-  const hours = Math.floor(time / 1000 / 60 / 60);
-  console.log(`min: ${min}, hours: ${hours}`);
-
-  return `${
-    hours ? `${hours} ${declOfNum(hours, ['часа', 'часов', 'часов'])}` : ''
-  } ${min ? `${min} ${declOfNum(min, ['минуты', 'минут', 'минут'])}` : ''}`;
-}
-export function formatTimeToShortString(time: number): string {
-  const min = Math.ceil(time / 1000 / 60) % 60;
-  const hours = Math.floor(time / 1000 / 60 / 60);
-  console.log(`min: ${min}, hours: ${hours}`);
-
-  return `${hours ? `${hours}ч ` : ''}${min ? `${min}` : ''}`;
-}
-
 export function declOfNum(number: number, titles: string[]) {
   let cases = [2, 0, 1, 1, 1, 2];
   return titles[
@@ -49,6 +29,49 @@ export function declOfNum(number: number, titles: string[]) {
       ? 2
       : cases[number % 10 < 5 ? number % 10 : 5]
   ];
+}
+
+export enum TFormatTimeFn {
+  WithColon = 'WithColon',
+  Long = 'Long',
+  Short = 'Short',
+}
+
+export function formatTime(ms: number, type: TFormatTimeFn): string {
+  const days = Math.floor(ms / (24 * 60 * 60 * 1000));
+  const hours = Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+  const minutes = (ms % (60 * 60 * 1000)) / (60 * 1000);
+  const roundedMinutes =
+    type === TFormatTimeFn.WithColon ? Math.floor(minutes) : Math.ceil(minutes);
+  const seconds = Math.ceil(ms / 1000) % 60;
+
+  switch (type) {
+    case TFormatTimeFn.WithColon:
+      return `${hours ? (hours < 10 ? `0${hours}:` : `${hours}:`) : ''}${
+        roundedMinutes > 9 ? '' : '0'
+      }${roundedMinutes}:${seconds > 9 ? '' : '0'}${seconds}`;
+
+    case TFormatTimeFn.Long:
+      return `${
+        hours ? `${hours} ${declOfNum(hours, ['часа', 'часов', 'часов'])}` : ''
+      } ${
+        roundedMinutes
+          ? `${roundedMinutes} ${declOfNum(roundedMinutes, [
+              'минуты',
+              'минут',
+              'минут',
+            ])}`
+          : ''
+      }`.trim();
+
+    case TFormatTimeFn.Short:
+      return `${days ? `${days}дн ` : ''}${hours ? `${hours}ч ` : ''}${
+        roundedMinutes ? `${roundedMinutes}мин` : ''
+      }`.trim();
+
+    default:
+      return '';
+  }
 }
 
 export function getRandomAlphanumericString(length: number) {
@@ -78,4 +101,29 @@ export function returnNewMessages(
       nodeRef: createRef<HTMLDivElement>(),
     },
   ];
+}
+
+export function getTimeFromActiveIntervals(
+  timeInterval: ITimeInterval | TBreakInterval
+) {
+  return (
+    timeInterval.activeIntervals?.reduce((acc, activeInterval) => {
+      const workTimeInterval =
+        (activeInterval.pause ?? timeInterval.finish ?? activeInterval.start) -
+        activeInterval.start;
+
+      return acc + workTimeInterval;
+    }, 0) ?? 0
+  );
+}
+
+export function createArrayOfNumber(
+  base: number,
+  numberOfElements: number
+): number[] {
+  let newArray = [];
+  for (let i = 0; i < numberOfElements; i++) {
+    newArray.push(base * (i + 1));
+  }
+  return newArray;
 }

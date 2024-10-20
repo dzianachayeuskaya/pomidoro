@@ -22,8 +22,9 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import classNames from 'classnames';
 import { Break } from '../Break';
 import {
-  formatTimeToStringWithColon,
+  formatTime,
   returnNewMessages,
+  TFormatTimeFn,
 } from '../../utils/functions';
 import { EIcons, Icon } from '../Icon';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
@@ -487,7 +488,7 @@ export function TimerBlock() {
                             [styles.break]: !isPomidor && isTimerActive,
                           },
                         ])}>
-                        {formatTimeToStringWithColon(currentTime)}
+                        {formatTime(currentTime, TFormatTimeFn.WithColon)}
                       </span>
                       <button
                         className='addBtn'

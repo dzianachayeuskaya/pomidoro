@@ -5,10 +5,21 @@ import { EBlockType, StatBlock } from '../../components/StatBlock';
 import { Break } from '../../components/Break';
 import classNames from 'classnames';
 import { EIcons, Icon } from '../../components/Icon';
-import { declOfNum, formatTimeToStringWithWord } from '../../utils/functions';
-import { useRecoilValue } from 'recoil';
-import {  EFilter, statDataState } from '../../recoil_state';
+import {
+  createArrayOfNumber,
+  declOfNum,
+  formatTime,
+  TFormatTimeFn,
+} from '../../utils/functions';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  EFilter,
+  statDataState,
+  summaryTimeState,
+  timeIntervalState,
+} from '../../recoil_state';
 import { DropList, EDropListType } from '../../components/DropList';
+import { numberOfPomidorsInDivision } from '../../utils/constants';
 
 enum EActiveDay {
   mon,
@@ -30,8 +41,6 @@ const daysList = [
   { key: EActiveDay.sun, short: 'ВС', long: 'Воскресение' },
 ];
 
-const yAxixList = ['1 ч 40 мин', '1 ч 15 мин', '50 мин', '25 мин'];
-
 const activeDayOfWeek = new Date().getDay() ? new Date().getDay() - 1 : 6;
 
 const options = [EFilter.current, EFilter.last, EFilter.beforeLast];
@@ -39,12 +48,19 @@ const options = [EFilter.current, EFilter.last, EFilter.beforeLast];
 export function Stat() {
   const [activeDay, setActiveDay] = useState(activeDayOfWeek);
 
+  const [{ pomidorTime }] = useRecoilState(timeIntervalState);
+  const yAxixList = createArrayOfNumber(
+    pomidorTime * numberOfPomidorsInDivision,
+    4
+  );
+
   const data = useRecoilValue(statDataState);
 
-  const calculateDailyWorkPercentage = (day: EActiveDay) => {
-    const activityPercentage = data[day].work / (2 * 60 * 60);
-    return Math.round(activityPercentage);
-  };
+  // the scale has 5 divisions, 1 division contains 4 tomatoes
+  const calculateDailyWorkPercentage = (day: EActiveDay) =>
+    Math.round(
+      (data[day].work * (20 / numberOfPomidorsInDivision)) / pomidorTime
+    );
 
   const calculateFocus = (day: EActiveDay) => {
     return `${
@@ -53,10 +69,7 @@ export function Stat() {
         : Math.round(data[day].completedWork / data[day].work)
     }%`;
   };
-
-  const calculatePause = (day: EActiveDay) => {
-    return ``;
-  };
+  const summaryTime = useRecoilValue(summaryTimeState);
 
   const onBarClick = (e: MouseEvent<HTMLDivElement>) => {
     const dayShort = e.currentTarget.getAttribute('data-value');
@@ -72,10 +85,7 @@ export function Stat() {
         <Text As='h3' size={24} weight={700}>
           Ваша активность
         </Text>
-        <DropList
-          options={options}
-          type={EDropListType.taskListFilter}
-        />
+        <DropList options={options} type={EDropListType.taskListFilter} />
       </div>
       <div className={styles.main}>
         <div className={styles.aside}>
@@ -89,8 +99,9 @@ export function Stat() {
               <span className={styles.activityBlockContent}>
                 <span>Вы работали над задачами в течение </span>
                 <span className={styles.activeTime}>
-                  {formatTimeToStringWithWord(
-                    data[activeDay].work + data[activeDay].break
+                  {formatTime(
+                    data[activeDay].work + data[activeDay].break,
+                    TFormatTimeFn.Long
                   )}
                 </span>
               </span>
@@ -127,11 +138,13 @@ export function Stat() {
         <div className={styles.chartWrapper}>
           <div className={styles.chartContentWrapper}>
             {daysList.map(({ key, short }) => {
+              const dailyPercentage = calculateDailyWorkPercentage(key);
               console.log(
                 'calculateDailyWorkPercentage(key)',
-                calculateDailyWorkPercentage(key)
+                key,
+                'dailyPercentage',
+                dailyPercentage
               );
-              const dailyPercentage = calculateDailyWorkPercentage(key);
               return (
                 <div
                   className={styles.barWrapper}
@@ -164,9 +177,9 @@ export function Stat() {
               <div className={styles.horBar}></div>
             </div>
             <div className={styles.yAxis}>
-              {yAxixList.map((item) => (
+              {yAxixList.reverse().map((item) => (
                 <div className={styles.yAxisItem} key={item}>
-                  <Text size={12}>{item}</Text>
+                  <Text size={12}>{formatTime(item, TFormatTimeFn.Short)}</Text>
                 </div>
               ))}
             </div>
@@ -181,14 +194,14 @@ export function Stat() {
           data={calculateFocus(activeDay)}
         />
         <StatBlock
-          title={EBlockType.pause}
-          isActive={!data[activeDay].empty}
-          data={calculatePause(activeDay)}
-        />
-        <StatBlock
           title={EBlockType.stops}
           isActive={!data[activeDay].empty}
           data={`${data[activeDay].stops}`}
+        />
+        <StatBlock
+          title={EBlockType.summary}
+          isActive={!data[activeDay].empty}
+          data={formatTime(summaryTime, TFormatTimeFn.Short)}
         />
       </div>
     </div>

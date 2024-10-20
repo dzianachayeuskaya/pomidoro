@@ -141,7 +141,7 @@ export function MainContent() {
           Добавить
         </button>
         <Break size={25} top />
-        <div className={styles.divider}></div>
+        {!!taskList.length && (<div className={styles.divider}></div>)}
         <TransitionGroup className={styles.taskList}>
           {taskList.map((item) => {
             const taskRef = item.taskRef;
@@ -169,7 +169,7 @@ export function MainContent() {
             );
           })}
         </TransitionGroup>
-        <div className={styles.divider}></div>
+        {!!taskList.length && (<div className={styles.divider}></div>)}
       </div>
       <ModalWindow onClose={onCancel} isOpen={isModalOpen}>
         <Text size={24}>Удалить задачу?</Text>

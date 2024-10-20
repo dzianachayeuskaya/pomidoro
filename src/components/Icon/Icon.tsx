@@ -9,7 +9,7 @@ export enum EIcons {
   settings = 'settings',
   drop = 'drop',
   focus = 'focus',
-  pause = 'pause',
+  summary = 'summary',
   stops = 'stops',
   happyTomato = 'happyTomato',
   decrease = 'decrease',
@@ -155,7 +155,7 @@ export function Icon(props: IIconsProps) {
             />
           </svg>
         );
-      case 'pause':
+      case 'summary':
         return (
           <svg
             className={classNames({ [styles[`svg${size}`]]: size })}

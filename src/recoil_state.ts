@@ -1,10 +1,16 @@
 import { MutableRefObject } from 'react';
 import { atom, selector } from 'recoil';
+import { getTimeFromActiveIntervals } from './utils/functions';
 
 export interface IActiveInterval {
   start: number;
   pause?: number;
 }
+
+export type TBreakInterval = Omit<
+  ITimeInterval,
+  'break' | 'isCompleted' | 'isCurrent'
+>;
 
 export interface ITimeInterval {
   pomidorId: number;
@@ -12,7 +18,7 @@ export interface ITimeInterval {
   isCurrent: boolean;
   activeIntervals?: IActiveInterval[];
   finish?: number;
-  break: Omit<ITimeInterval, 'break' | 'isCompleted' | 'isCurrent'>;
+  break: TBreakInterval;
 }
 
 export interface ITask {
@@ -43,8 +49,10 @@ export enum EFilter {
   beforeLast = '2 недели назад',
 }
 
-export type TPomidorDuration = 900000 | 1500000 | 2100000;
-export type TShortBreakDuration = 300000 | 600000 | 900000;
+// export type TPomidorDuration = 900000 | 1500000 | 2100000;
+export type TPomidorDuration = 10000 | 1500000 | 2100000;
+// export type TShortBreakDuration = 300000 | 600000 | 900000;
+export type TShortBreakDuration = 10000 | 600000 | 900000;
 export type TLongBreakDuration = 1200000 | 1800000 | 2400000;
 
 export interface ITimeByDay {
@@ -89,6 +97,25 @@ const storageTaskList = localStorage.getItem('taskList');
 export const taskListState = atom<ITask[]>({
   key: 'taskListState',
   default: storageTaskList ? JSON.parse(storageTaskList) : [],
+});
+
+export const summaryTimeState = selector({
+  key: 'summaryTimeState',
+  get: ({ get }) => {
+    const taskList = get(taskListState);
+    const summaryTime = taskList.reduce((acc, task) => {
+      const taskTime = task.pomidorArray.reduce((acc, pomidor) => {
+        const workTime = getTimeFromActiveIntervals(pomidor);
+
+        const breakTime = getTimeFromActiveIntervals(pomidor.break);
+
+        return acc + workTime + breakTime;
+      }, 0);
+      return acc + taskTime;
+    }, 0);
+    
+    return summaryTime;
+  },
 });
 
 export const statDataState = selector({

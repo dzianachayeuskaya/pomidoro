@@ -13,8 +13,8 @@ enum EActiveColor {
 
 export enum EBlockType {
   focus = 'Фокус',
-  pause = 'Серия\u00A0дней',
   stops = 'Остановки',
+  summary = 'Общее\u00A0время',
 }
 interface IStatsBlockProps {
   title: EBlockType;
@@ -24,13 +24,11 @@ interface IStatsBlockProps {
 
 export function StatBlock({ title, data, isActive }: IStatsBlockProps) {
   const [activeColor, setActiveColor] = useState(EActiveColor.orange);
-  // const [amount, setAmount] = useState('');
 
   useEffect(() => {
     switch (title) {
-      case EBlockType.pause:
+      case EBlockType.summary:
         setActiveColor(EActiveColor.violet);
-        // setAmount();
         break;
       case EBlockType.stops:
         setActiveColor(EActiveColor.blue);
@@ -44,6 +42,7 @@ export function StatBlock({ title, data, isActive }: IStatsBlockProps) {
     <div
       className={classNames(styles.block, {
         [styles[`${activeColor}`]]: isActive,
+        [styles.large]: title === EBlockType.summary,
       })}>
       <div className={styles.content}>
         <div className={styles.text}>
@@ -51,14 +50,14 @@ export function StatBlock({ title, data, isActive }: IStatsBlockProps) {
             {title}
           </Text>
           <Break size={20} />
-          <span className={styles.amount}>{data}</span>
+          <span className={styles.amount}>{data ? data : 0}</span>
         </div>
         <Icon
           name={
             activeColor === EActiveColor.orange
               ? EIcons.focus
               : activeColor === EActiveColor.violet
-              ? EIcons.pause
+              ? EIcons.summary
               : EIcons.stops
           }
         />

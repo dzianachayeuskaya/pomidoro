@@ -25,10 +25,6 @@
 .aside {
     display: flex;
     flex-direction: column;
-    flex: 1 1 130px;
-}
-
-.aside {
     width: min(450px, 100%);
     height: 100%;
 }
@@ -124,7 +120,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 32px;
+    margin-left: 56px;
     gap: 32px;
     width: calc(100% - 200px);
     overflow: scroll;
@@ -185,8 +181,10 @@
 }
 
 .yAxisItem {
-    padding: 72px 20px 0;
-    height: 11px;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 20px;
+    height: 84px;
     text-align: center;
 }
 
@@ -212,13 +210,13 @@
         height: 470px;
     }
 
+    .aside {
+        min-width: 260px;
+        width: 260px;
+    }
+
     .footer {
         flex-direction: row;
         flex-wrap: wrap;
-    }
-
-    .chartContentWrapper {
-        padding: 0 56px;
-        width: calc(100% - 240px);
     }
 }

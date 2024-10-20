@@ -47,12 +47,20 @@
 }
 
 .amount {
-    font-size: 64px;
+    font-size: 54px;
 }
 
 @media(min-width: 768px) {
     .block {
         max-width: 50%;
         margin: 0 auto;
+    }
+
+    .amount {
+        text-wrap: nowrap;
+    }
+
+    .block.large {
+        min-width: fit-content;
     }
 }

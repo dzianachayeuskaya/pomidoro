@@ -17,7 +17,7 @@ import {
 } from '../../recoil_state';
 import { RecoilState, useRecoilState } from 'recoil';
 import { CSSTransition } from 'react-transition-group';
-import { formatTimeToStringWithWord } from '../../utils/functions';
+import { formatTime, TFormatTimeFn } from '../../utils/functions';
 
 export enum EDropListType {
   taskListFilter = 'taskListFilter',
@@ -141,7 +141,7 @@ export function DropList({
           tabIndex={0}
           onKeyUp={onSelectTitleKeyUp}>
           {intervalType && typeof state === 'object' && intervalType in state
-            ? formatTimeToStringWithWord(state[intervalType])
+            ? formatTime(state[intervalType], TFormatTimeFn.Long)
             : typeof state === 'string'
             ? state
             : 0}
@@ -172,7 +172,7 @@ export function DropList({
                 data-value={item}
                 tabIndex={0}>
                 {typeof item === 'number'
-                  ? formatTimeToStringWithWord(item)
+                  ? formatTime(item, TFormatTimeFn.Long)
                   : item}
               </li>
             ))}

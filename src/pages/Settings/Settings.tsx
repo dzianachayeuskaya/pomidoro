@@ -5,8 +5,10 @@ import { DropList, EDropListType } from '../../components/DropList';
 import { ETimeIntervalType } from '../../recoil_state';
 import { Break } from '../../components/Break';
 
-const pomidorOptions = [900000, 1500000, 2100000];
-const shortBreakOptions = [300000, 600000, 900000];
+// const pomidorOptions = [900000, 1500000, 2100000];
+const pomidorOptions = [10000, 1500000, 2100000];
+// const shortBreakOptions = [300000, 600000, 900000];
+const shortBreakOptions = [10000, 600000, 900000];
 const longBreakOptions = [1200000, 1800000, 2400000];
 
 export function Settings() {
