@@ -57,7 +57,7 @@
 
 .selectContent {
   position: absolute;
-  top: 60px;
+  top: 52px;
   right: -1px;
   display: flex;
   flex-direction: column;
@@ -69,7 +69,7 @@
 }
 
 .selectItem {
-  padding: 20px 24px;
+  padding: 16px 24px;
   cursor: pointer;
   transition: background-color 0.2s ease, outline 0.2s ease;
 }
@@ -121,5 +121,13 @@
   .selectTitle {
     padding-top: 20px;
     padding-bottom: 20px;
+  }
+
+  .selectContent {
+    top: 60px;
+  }
+
+  .selectItem {
+    padding: 20px 24px;
   }
 }
