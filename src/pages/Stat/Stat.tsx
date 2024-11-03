@@ -63,6 +63,7 @@ export function Stat() {
     );
 
   const calculateFocus = (day: EActiveDay) => {
+     console.log('calculateFocus', data[day]);
     return `${
       data[day].empty
         ? '0'
@@ -139,12 +140,6 @@ export function Stat() {
           <div className={styles.chartContentWrapper}>
             {daysList.map(({ key, short }) => {
               const dailyPercentage = calculateDailyWorkPercentage(key);
-              console.log(
-                'calculateDailyWorkPercentage(key)',
-                key,
-                'dailyPercentage',
-                dailyPercentage
-              );
               return (
                 <div
                   className={styles.barWrapper}

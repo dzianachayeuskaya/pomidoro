@@ -113,7 +113,7 @@ export const summaryTimeState = selector({
       }, 0);
       return acc + taskTime;
     }, 0);
-    
+
     return summaryTime;
   },
 });
@@ -206,8 +206,11 @@ export const statDataState = selector({
               timeByDay[startTimeDayOfMnWeek].work +=
                 endTimestamp - interval.start;
 
-              if (indexOfIntervalWithPause === -1 && pomidor.finish) {
+              if (pomidor.finish) {
                 timeByDay[startTimeDayOfMnWeek].pomidorCount += 1;
+              }
+
+              if (indexOfIntervalWithPause === -1 && pomidor.finish) {
                 timeByDay[startTimeDayOfMnWeek].completedWork +=
                   endTimestamp - interval.start;
               }
@@ -223,8 +226,11 @@ export const statDataState = selector({
               timeByDay[startTimeDayOfMnWeek + 1].work +=
                 endTimestamp - endTimestampOfStartDay;
 
-              if (indexOfIntervalWithPause === -1 && pomidor.finish) {
+              if (pomidor.finish) {
                 timeByDay[startTimeDayOfMnWeek + 1].pomidorCount += 1;
+              }
+
+              if (indexOfIntervalWithPause === -1 && pomidor.finish) {
                 timeByDay[startTimeDayOfMnWeek].completedWork +=
                   endTimestampOfStartDay - interval.start;
                 timeByDay[startTimeDayOfMnWeek + 1].completedWork +=
@@ -276,8 +282,11 @@ export const statDataState = selector({
             timeByDay[endTimeDayOfMnWeek].work +=
               endTimestamp - endTimestampOfStartDay;
 
-            if (indexOfIntervalWithPause === -1 && pomidor.finish) {
+            if (pomidor.finish) {
               timeByDay[endTimeDayOfMnWeek].pomidorCount += 1;
+            }
+
+            if (indexOfIntervalWithPause === -1 && pomidor.finish) {
               timeByDay[endTimeDayOfMnWeek].completedWork +=
                 endTimestamp - endTimestampOfStartDay;
             }

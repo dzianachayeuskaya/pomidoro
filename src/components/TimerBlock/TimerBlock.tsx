@@ -48,7 +48,8 @@ export function TimerBlock() {
   const { taskId } = useParams();
 
   const [taskList, setTaskList] = useRecoilState(taskListState);
-  const [{ pomidorTime, shortBreakTime, longBreakTime }] = useRecoilState(timeIntervalState);
+  const [{ pomidorTime, shortBreakTime, longBreakTime }] =
+    useRecoilState(timeIntervalState);
 
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [isPause, setIsPause] = useState(false);
@@ -71,7 +72,7 @@ export function TimerBlock() {
   const changeList = useCallback(
     (action: EActions, addAction?: EActions) => {
       let newProps: INewProps = {};
-      let isCompleted = false;
+      let isCompleted: boolean;
 
       switch (action) {
         case EActions.startTimer: {
@@ -225,6 +226,8 @@ export function TimerBlock() {
                 });
               }
 
+              isCompleted = isCompleted || timer.isCompleted;
+
               return {
                 ...timer,
                 pomidorArray: [...updatedArray],
@@ -254,14 +257,13 @@ export function TimerBlock() {
   };
 
   const pauseTimer = useCallback(() => {
-    console.log('pauseTimer');
-    if (isTimerActive) {
+    if (isTimerActive && !isCompleted) {
       changeList(EActions.pauseTimer);
       clearTimerIdRef();
       setIsTimerActive(false);
       setIsPause(true);
     }
-  }, [changeList, isTimerActive]);
+  }, [changeList, isTimerActive, isCompleted]);
 
   const finishTimer = useCallback(
     (action: EActions) => {
@@ -384,7 +386,9 @@ export function TimerBlock() {
           ) || 0;
         console.log('elapsed time: ', elapsedTime);
 
-        setCurrentTime((isPomidor ? pomidorTime : shortBreakTime) - elapsedTime);
+        setCurrentTime(
+          (isPomidor ? pomidorTime : shortBreakTime) - elapsedTime
+        );
       } else {
         setCurrentTime(isPomidor ? pomidorTime : shortBreakTime);
         console.log('isPomidorNew');
@@ -435,7 +439,6 @@ export function TimerBlock() {
   useEffect(() => {
     window.addEventListener('beforeunload', pauseTimer);
     return () => {
-      console.log('useEffect pauseTimer');
       if (isTimerActive) {
         window.removeEventListener('beforeunload', pauseTimer);
         pauseTimer();
@@ -520,7 +523,7 @@ export function TimerBlock() {
                         </button>
                       )}
 
-                      {((!isPause && isPomidor) || !isPomidor) && (
+                      {!isPomidor && (
                         <button
                           className='secondaryBtn'
                           onClick={onSkip}
@@ -534,7 +537,7 @@ export function TimerBlock() {
                         </button>
                       )}
 
-                      {!isTimerActive && isPause && isPomidor && (
+                      {isPomidor && (
                         <button className='secondaryBtn' onClick={onComplete}>
                           Сделано
                         </button>
