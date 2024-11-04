@@ -172,9 +172,8 @@ export const statDataState = selector({
 
     list.forEach((task) => {
       task.pomidorArray.forEach((pomidor) => {
-        const indexOfIntervalWithPause = pomidor.activeIntervals?.filter(
-          (interval) => interval.pause
-        ) || [];
+        const indexOfIntervalWithPause =
+          pomidor.activeIntervals?.filter((interval) => interval.pause) || [];
 
         pomidor.activeIntervals?.forEach((interval) => {
           const startDate = new Date(interval.start);
@@ -188,6 +187,11 @@ export const statDataState = selector({
             ? endDate.getDay() - 1
             : 6;
 
+          const pauseDayOfSnWeek = interval.pause
+            ? new Date(interval.pause).getDay()
+            : 0;
+          const pauseDayOfMnWeek = pauseDayOfSnWeek ? pauseDayOfSnWeek - 1 : 6;
+
           const isFinishedPomidor =
             (pomidor.finish && !interval.pause) ||
             (pomidor.finish &&
@@ -200,11 +204,7 @@ export const statDataState = selector({
             endTimestamp >= weekStartDate.getTime() &&
             endTimestamp <= weekEndDate.getTime()
           ) {
-            if (interval.pause) {
-              const pauseDayOfSnWeek = new Date(interval.pause).getDay();
-              const pauseDayOfMnWeek = pauseDayOfSnWeek
-                ? pauseDayOfSnWeek - 1
-                : 6;
+            if (interval.pause && !isFinishedPomidor) {
               timeByDay[pauseDayOfMnWeek].stops += 1;
             }
 
@@ -251,12 +251,9 @@ export const statDataState = selector({
             if (
               interval.pause &&
               interval.pause >= weekStartDate.getTime() &&
-              interval.pause <= weekEndDate.getTime()
+              interval.pause <= weekEndDate.getTime() &&
+              !isFinishedPomidor
             ) {
-              const pauseDayOfSnWeek = new Date(interval.pause).getDay();
-              const pauseDayOfMnWeek = pauseDayOfSnWeek
-                ? pauseDayOfSnWeek - 1
-                : 6;
               timeByDay[pauseDayOfMnWeek].stops += 1;
             }
 
@@ -275,12 +272,9 @@ export const statDataState = selector({
             if (
               interval.pause &&
               interval.pause >= weekStartDate.getTime() &&
-              interval.pause <= weekEndDate.getTime()
+              interval.pause <= weekEndDate.getTime() &&
+              !isFinishedPomidor
             ) {
-              const pauseDayOfSnWeek = new Date(interval.pause).getDay();
-              const pauseDayOfMnWeek = pauseDayOfSnWeek
-                ? pauseDayOfSnWeek - 1
-                : 6;
               timeByDay[pauseDayOfMnWeek].stops += 1;
             }
 
