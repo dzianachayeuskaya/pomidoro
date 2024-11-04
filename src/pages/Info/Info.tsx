@@ -51,15 +51,18 @@ export function Info() {
             <button className='secondaryBtn readonly' disabled>
               Пропустить
             </button>
-            <Text size={16}>
-              Переход к следующему «помидору», не завершив его
-            </Text>
+            <Text size={16}>Переход к следующему «помидору»</Text>
           </div>
           <div className={styles.row}>
             <button className='secondaryBtn readonly' disabled>
               Сделано
             </button>
             <Text size={16}>Завершение задачи</Text>
+          </div>
+          <div className={styles.row}>
+            <Text size={16}>
+              Чтобы быть сфокусированным, выполняй «помидоры» без остановок
+            </Text>
           </div>
         </div>
       </div>

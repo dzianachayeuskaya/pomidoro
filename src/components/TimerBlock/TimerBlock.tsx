@@ -110,10 +110,9 @@ export function TimerBlock() {
               timer.pomidorArray.at(-1);
 
             if (currentPomidor) {
+              const current = isPomidor ? currentPomidor : currentPomidor.break;
               const newActiveIntervalArr: IActiveInterval[] =
-                (isPomidor
-                  ? currentPomidor.activeIntervals
-                  : currentPomidor.break.activeIntervals) || [];
+                current.activeIntervals || [];
 
               if (newProps.start) {
                 newProps = {
@@ -131,7 +130,7 @@ export function TimerBlock() {
                 if (lastActiveInterval) {
                   lastActiveInterval = {
                     ...lastActiveInterval,
-                    pause: newProps.pause,
+                    pause: current.finish || newProps.pause,
                   };
 
                   newProps = {
@@ -145,14 +144,8 @@ export function TimerBlock() {
                 }
               }
 
-              if (
-                newProps.finish && isPomidor
-                  ? currentPomidor.activeIntervals?.at(-1)?.pause
-                  : currentPomidor.break.activeIntervals?.at(-1)?.pause
-              ) {
-                newProps.finish = isPomidor
-                  ? currentPomidor.activeIntervals?.at(-1)?.pause
-                  : currentPomidor.break.activeIntervals?.at(-1)?.pause;
+              if (newProps.finish && newActiveIntervalArr?.at(-1)?.pause) {
+                newProps.finish = newActiveIntervalArr?.at(-1)?.pause;
               }
 
               const isCurrent = addPomidorAction

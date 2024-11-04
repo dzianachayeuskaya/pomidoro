@@ -57,7 +57,7 @@ export type TLongBreakDuration = 1200000 | 1800000 | 2400000;
 
 export interface ITimeByDay {
   work: number;
-  completedWork: number;
+  completedWorkWithoutPause: number;
   break: number;
   empty: boolean;
   pomidorCount: number;
@@ -126,7 +126,7 @@ export const statDataState = selector({
     for (let i = 0; i <= 6; i++) {
       timeByDay[i] = {
         work: 0,
-        completedWork: 0,
+        completedWorkWithoutPause: 0,
         break: 0,
         empty: true,
         pomidorCount: 0,
@@ -172,9 +172,9 @@ export const statDataState = selector({
 
     list.forEach((task) => {
       task.pomidorArray.forEach((pomidor) => {
-        const indexOfIntervalWithPause = pomidor.activeIntervals?.findIndex(
+        const indexOfIntervalWithPause = pomidor.activeIntervals?.filter(
           (interval) => interval.pause
-        );
+        ) || [];
 
         pomidor.activeIntervals?.forEach((interval) => {
           const startDate = new Date(interval.start);
@@ -187,6 +187,12 @@ export const statDataState = selector({
           const endTimeDayOfMnWeek = endDate.getDay()
             ? endDate.getDay() - 1
             : 6;
+
+          const isFinishedPomidor =
+            (pomidor.finish && !interval.pause) ||
+            (pomidor.finish &&
+              interval.pause &&
+              pomidor.finish === interval.pause);
 
           if (
             interval.start >= weekStartDate.getTime() &&
@@ -206,12 +212,12 @@ export const statDataState = selector({
               timeByDay[startTimeDayOfMnWeek].work +=
                 endTimestamp - interval.start;
 
-              if (pomidor.finish) {
+              if (isFinishedPomidor) {
                 timeByDay[startTimeDayOfMnWeek].pomidorCount += 1;
               }
 
-              if (indexOfIntervalWithPause === -1 && pomidor.finish) {
-                timeByDay[startTimeDayOfMnWeek].completedWork +=
+              if (indexOfIntervalWithPause.length === 1 && pomidor.finish) {
+                timeByDay[startTimeDayOfMnWeek].completedWorkWithoutPause +=
                   endTimestamp - interval.start;
               }
             } else {
@@ -226,14 +232,14 @@ export const statDataState = selector({
               timeByDay[startTimeDayOfMnWeek + 1].work +=
                 endTimestamp - endTimestampOfStartDay;
 
-              if (pomidor.finish) {
+              if (isFinishedPomidor) {
                 timeByDay[startTimeDayOfMnWeek + 1].pomidorCount += 1;
               }
 
-              if (indexOfIntervalWithPause === -1 && pomidor.finish) {
-                timeByDay[startTimeDayOfMnWeek].completedWork +=
+              if (indexOfIntervalWithPause.length === 1 && pomidor.finish) {
+                timeByDay[startTimeDayOfMnWeek].completedWorkWithoutPause +=
                   endTimestampOfStartDay - interval.start;
-                timeByDay[startTimeDayOfMnWeek + 1].completedWork +=
+                timeByDay[startTimeDayOfMnWeek + 1].completedWorkWithoutPause +=
                   endTimestamp - endTimestampOfStartDay;
               }
             }
@@ -258,8 +264,8 @@ export const statDataState = selector({
             timeByDay[startTimeDayOfMnWeek].work +=
               endTimestampOfStartDay - interval.start;
 
-            if (indexOfIntervalWithPause === -1 && pomidor.finish) {
-              timeByDay[startTimeDayOfMnWeek].completedWork +=
+            if (indexOfIntervalWithPause.length === 1 && pomidor.finish) {
+              timeByDay[startTimeDayOfMnWeek].completedWorkWithoutPause +=
                 endTimestampOfStartDay - interval.start;
             }
           } else if (
@@ -282,12 +288,12 @@ export const statDataState = selector({
             timeByDay[endTimeDayOfMnWeek].work +=
               endTimestamp - endTimestampOfStartDay;
 
-            if (pomidor.finish) {
+            if (isFinishedPomidor) {
               timeByDay[endTimeDayOfMnWeek].pomidorCount += 1;
             }
 
-            if (indexOfIntervalWithPause === -1 && pomidor.finish) {
-              timeByDay[endTimeDayOfMnWeek].completedWork +=
+            if (indexOfIntervalWithPause.length === 1 && pomidor.finish) {
+              timeByDay[endTimeDayOfMnWeek].completedWorkWithoutPause +=
                 endTimestamp - endTimestampOfStartDay;
             }
           }

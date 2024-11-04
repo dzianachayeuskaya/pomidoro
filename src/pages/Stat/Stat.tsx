@@ -67,7 +67,7 @@ export function Stat() {
     return `${
       data[day].empty
         ? '0'
-        : Math.round(data[day].completedWork / data[day].work)
+        : Math.round(data[day].completedWorkWithoutPause / data[day].work * 100)
     }%`;
   };
   const summaryTime = useRecoilValue(summaryTimeState);
